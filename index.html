@@ -1,332 +1,428 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Heart, Volume2, VolumeX, Sparkles, Stars, Gift, Music, 
-  ChevronRight, ChevronLeft, Award, Coffee, Zap, Info, ShieldCheck,
-  Ghost, Laugh, Trash2, Rocket
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorry Meri Pyari Buggu - Special Digital Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;700;900&display=swap');
 
-const App = () => {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [noCount, setNoCount] = useState(0);
-  const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [forgiveProgress, setForgiveProgress] = useState(0);
-  const audioRef = useRef(null);
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fff1f2 0%, #fffafa 100%);
+        }
 
-  const pages = [
-    "Intro", "Gadha Audit", "Maafi Meter", "Buggu Stats", 
-    "Loot Lo", "The Trap", "Bonding", "Gadha Promises", "Emotional Blackmail", "Party Time"
-  ];
+        .glass {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+        }
 
-  // Using more robust and direct GIF URLs
-  const GIFS = {
-    sad: "sad.gif",
-    wait: "wait.gif",
-    dancing: "dancing.gif",
-    confused: "confused.gif"
-  };
+        .page {
+            display: none;
+            animation: fadeInSlide 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
 
-  const toggleMusic = () => {
-    if (isPlaying) { audioRef.current.pause(); } 
-    else { audioRef.current.play().catch(() => {}); }
-    setIsPlaying(!isPlaying);
-  };
+        .page.active {
+            display: flex;
+        }
 
-  const next = () => setCurrentPage((prev) => Math.min(prev + 1, pages.length - 1));
-  const prev = () => setCurrentPage((prev) => Math.max(prev - 1, 0));
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
 
-  const moveNoButton = () => {
-    const x = Math.random() * (window.innerWidth - 120);
-    const y = Math.random() * (window.innerHeight - 50);
-    setNoButtonPos({ x, y });
-    setNoCount(prev => prev + 1);
-  };
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            color: #fda4af;
+            opacity: 0.2;
+            animation: floatUp 8s infinite linear;
+        }
 
-  const getMeterText = () => {
-    if (forgiveProgress < 20) return "Abhi to gussa 7th floor pe hai! 😤";
-    if (forgiveProgress < 50) return "Thoda thoda pighal rahi ho? 😏";
-    if (forgiveProgress < 80) return "Bas thoda aur! Maafi ki khushbu aa rahi hai! 🌸";
-    if (forgiveProgress < 100) return "Almost there! Duggu ke kaan ready hain khichne ke liye! 👂";
-    return "FULL MAAFI! Party shuru karein? 🎉";
-  };
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.3; }
+            80% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
 
-  const PageWrapper = ({ children, title }) => (
-    <div className="animate-in fade-in slide-in-from-right-8 duration-500 h-full flex flex-col items-center justify-center">
-      <h2 className="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full">{title}</h2>
-      {children}
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-[#fffafa] text-gray-800 font-sans selection:bg-rose-200 overflow-hidden relative">
-      <audio ref={audioRef} loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" />
-
-      {/* Header / Progress */}
-      <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2">
-        {pages.map((_, i) => (
-          <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i <= currentPage ? 'w-6 bg-rose-500' : 'w-2 bg-rose-200'}`} />
-        ))}
-      </div>
-
-      <main className="max-w-xl mx-auto h-screen flex flex-col justify-center p-6 relative z-10">
-        <div className="bg-white/60 backdrop-blur-2xl border border-white p-8 rounded-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.05)] min-h-[520px] relative overflow-hidden flex flex-col justify-center">
-          
-          {currentPage === 0 && (
-            <PageWrapper title="Danger Warning">
-              <div className="text-center">
-                <div className="mb-6 relative inline-block">
-                    <img 
-                      src={GIFS.sad} 
-                      className="w-32 h-32 rounded-full border-4 border-rose-100 object-cover" 
-                      alt="Sad Duggu"
-                      onError={(e) => e.target.src = "https://media.giphy.com/media/OPU6wUKARAyGk/giphy.gif"}
-                    />
-                    <div className="absolute -top-2 -right-2 bg-yellow-400 p-2 rounded-full animate-ping opacity-75"></div>
-                </div>
-                <h1 className="text-3xl font-black text-rose-900 mb-4 tracking-tight">System Alert: Buggu is Angry!</h1>
-                <p className="text-gray-500 mb-8 italic text-sm">"Warning: Insaan galti karta hai, par Duggu ne PHD ki hai."</p>
-                <button onClick={next} className="bg-rose-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg hover:rotate-2 transition-all">Start Rescue Mission 🚒</button>
-              </div>
-            </PageWrapper>
-          )}
-
-          {currentPage === 1 && (
-            <PageWrapper title="Duggu's Audit Report">
-              <div className="w-full space-y-4">
-                <div className="bg-orange-50 p-6 rounded-3xl border border-orange-100">
-                  <h3 className="font-bold text-orange-800 flex items-center gap-2 mb-4"><Laugh size={18} /> Brain Cell Count: 1.5</h3>
-                  <div className="space-y-4">
-                    <div className="flex justify-between text-[10px] font-bold uppercase text-orange-400"><span>Confused State</span><span>100%</span></div>
-                    <div className="h-1.5 bg-white rounded-full"><div className="h-full bg-orange-400 w-full animate-pulse" /></div>
-                    <p className="text-xs text-orange-700 leading-relaxed italic">"Audit Result: Duggu is 100% Gadha, but he's YOUR Gadha. Return policy expired."</p>
-                  </div>
-                </div>
-                <div className="flex justify-center">
-                   <img src={GIFS.confused} className="w-24 h-24 rounded-2xl opacity-80" alt="Audit" />
-                </div>
-                <button onClick={next} className="w-full py-4 rounded-2xl border-2 border-rose-100 font-bold text-rose-600 hover:bg-rose-50 transition-all">Check Maafi Meter →</button>
-              </div>
-            </PageWrapper>
-          )}
-
-          {currentPage === 2 && (
-            <PageWrapper title="The Maafi Meter">
-              <div className="text-center w-full">
-                <div className="text-5xl mb-4 animate-bounce">🛠️</div>
-                <p className="mb-2 text-sm text-gray-400">Is button ko ghisne se gussa kam hoga:</p>
-                <div className="relative h-32 flex flex-col items-center justify-center mb-6">
-                  <div className="text-6xl font-black text-rose-600 drop-shadow-md">{forgiveProgress}%</div>
-                  <p className="text-xs font-bold text-rose-400 mt-2 italic">{getMeterText()}</p>
-                </div>
-                <button 
-                  onClick={() => setForgiveProgress(p => Math.min(p + 10, 100))}
-                  className="bg-rose-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg active:scale-90 transition-all"
-                >
-                  Click to Cool Down 🧊
-                </button>
-                {forgiveProgress === 100 && <button onClick={next} className="mt-6 block mx-auto text-green-500 font-bold underline animate-pulse">Meter Full! Aage badho →</button>}
-              </div>
-            </PageWrapper>
-          )}
-
-          {currentPage === 3 && (
-            <PageWrapper title="Buggu's Hidden Stats">
-              <div className="grid grid-cols-2 gap-4 w-full">
-                <div className="bg-rose-50 p-4 rounded-2xl border border-rose-100">
-                  <Award className="text-rose-500 mb-2" size={20} />
-                  <div className="font-black text-rose-900 text-sm">Angry Pout</div>
-                  <div className="text-[10px] text-rose-400 font-bold uppercase">Deadliest Weapon</div>
-                </div>
-                <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                  <Zap className="text-blue-500 mb-2" size={20} />
-                  <div className="font-black text-blue-900 text-sm">Gossip Speed</div>
-                  <div className="text-[10px] text-blue-400 font-bold uppercase">Faster than 5G</div>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100">
-                  <Ghost className="text-purple-500 mb-2" size={20} />
-                  <div className="font-black text-purple-900 text-sm">Cuteness</div>
-                  <div className="text-[10px] text-purple-400 font-bold uppercase">Illegal in 50 states</div>
-                </div>
-                <div className="bg-green-50 p-4 rounded-2xl border border-green-100">
-                  <Coffee className="text-green-500 mb-2" size={20} />
-                  <div className="font-black text-green-900 text-sm">Lazy Mode</div>
-                  <div className="text-[10px] text-green-400 font-bold uppercase">Pro Level</div>
-                </div>
-                <button onClick={next} className="col-span-2 py-4 mt-2 bg-white border border-rose-100 rounded-2xl font-bold text-rose-500 text-sm">Impressive, na? Next Page →</button>
-              </div>
-            </PageWrapper>
-          )}
-
-          {currentPage === 4 && (
-            <PageWrapper title="Duggu's Bribe Store">
-              <div className="space-y-3 w-full">
-                {[
-                  { t: "1 Free Head Massage", c: "Jab tak Buggu so na jaye" },
-                  { t: "Gossip Listening Session", c: "Without yawning promise" },
-                  { t: "Accept All Faults Voucher", c: "Duggu will say 'Meri galti thi'" }
-                ].map((v, i) => (
-                  <div key={i} className="bg-gradient-to-r from-rose-50 to-white border-2 border-dashed border-rose-200 p-4 rounded-2xl flex justify-between items-center group hover:scale-[1.02] transition-all">
-                    <div>
-                      <div className="font-bold text-rose-800 text-sm">{v.t}</div>
-                      <div className="text-[10px] text-gray-400 uppercase font-bold italic">{v.c}</div>
-                    </div>
-                    <Stars className="text-orange-300 group-hover:rotate-45 transition-transform" size={16} />
-                  </div>
-                ))}
-                <p className="text-[10px] text-center text-gray-400 italic mt-4">*No conditions apply. Buggu is Boss.*</p>
-                <button onClick={next} className="w-full py-4 bg-rose-600 text-white rounded-2xl font-bold shadow-md">Redeem & Move On →</button>
-              </div>
-            </PageWrapper>
-          )}
-
-          {currentPage === 5 && (
-            <PageWrapper title="The Trap (Maafi?)">
-              <div className="text-center">
-                <img 
-                  src={GIFS.wait} 
-                  className="w-32 h-32 mx-auto rounded-full mb-6 shadow-2xl" 
-                  alt="Waiting" 
-                  onError={(e) => e.target.src = "https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif"}
-                />
-                <h2 className="text-2xl font-black mb-10 text-rose-900">Final Chance! Maaf kiya?</h2>
-                <div className="flex gap-4 justify-center">
-                  <button onClick={next} className="bg-green-500 text-white px-10 py-4 rounded-2xl font-bold shadow-lg transform hover:scale-110 active:scale-95 transition-all">Haan! 😍</button>
-                  <button 
-                    onMouseOver={moveNoButton}
-                    onClick={moveNoButton}
-                    style={noCount > 0 ? { position: 'fixed', left: noButtonPos.x, top: noButtonPos.y, zIndex: 1000 } : {}}
-                    className="bg-red-500 text-white px-10 py-4 rounded-2xl font-bold shadow-lg transition-all duration-200"
-                  >
-                    {noCount > 3 ? "Still No? 😭" : "No 🥺"}
-                  </button>
-                </div>
-              </div>
-            </PageWrapper>
-          )}
-
-          {currentPage === 6 && (
-            <PageWrapper title="Our Chaotic Bond">
-              <div className="text-center w-full">
-                <div className="flex justify-center items-center gap-2 mb-8">
-                  <div className="bg-rose-100 p-6 rounded-3xl font-black text-rose-600 text-xl shadow-inner border border-rose-200">BUGGU</div>
-                  <div className="animate-pulse text-rose-500"><Heart fill="currentColor" size={32} /></div>
-                  <div className="bg-gray-900 p-6 rounded-3xl font-black text-white text-xl shadow-lg">GADHA</div>
-                </div>
-                <div className="bg-rose-50 p-6 rounded-3xl italic text-rose-700 text-sm leading-relaxed border border-rose-100">
-                  "Relationship goal: Main galti karunga, aap gussa karogi, phir main gadhon wali shakkar banaunga, aur aap maan jaogi. Repeat for 100 years."
-                </div>
-                <button onClick={next} className="mt-8 text-rose-400 font-bold uppercase tracking-widest text-[10px] hover:text-rose-600 transition-colors">See Promises →</button>
-              </div>
-            </PageWrapper>
-          )}
-
-          {currentPage === 7 && (
-            <PageWrapper title="Honest Promises Store">
-              <ul className="text-sm space-y-4 w-full">
-                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50 group">
-                  <span className="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
-                  <div className="text-gray-700">Ab se Duggu "Smart" banne ki acting karega. <br/><span className="text-[10px] text-rose-300 font-bold italic">(Hardware limited hai, software try karega)</span></div>
-                </li>
-                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50 group">
-                  <span className="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">2</span>
-                  <div className="text-gray-700">Galti hone par turant "Murga" ban jaunga. <br/><span className="text-[10px] text-rose-300 font-bold italic">(Bina bole, khud se)</span></div>
-                </li>
-                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50 group">
-                  <span className="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">3</span>
-                  <div className="text-gray-700">Buggu ko kabhi boring feel nahi hone dunga. <br/><span className="text-[10px] text-rose-300 font-bold italic">(Apne gadhapan se entertain karunga)</span></div>
-                </li>
-                <button onClick={next} className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold mt-2 shadow-xl hover:bg-black transition-all">Accept Deal & Next →</button>
-              </ul>
-            </PageWrapper>
-          )}
-
-          {currentPage === 8 && (
-            <PageWrapper title="Emotional Blackmail Time">
-              <div className="text-center">
-                <h2 className="text-3xl font-serif text-rose-900 mb-6 italic">"Pyari Buggu,"</h2>
-                <div className="text-gray-600 text-sm leading-relaxed mb-10 italic bg-white/40 p-6 rounded-3xl">
-                  "Dekho, main gadha hoon, donkey hoon, duffu hoon... par aapka favorite hoon na? Aapki hasi ke bina Duggu's brain is 0% battery. Maan jao, warna main dharne pe baith jaunga (with snacks)!"
-                </div>
-                <div className="flex justify-center gap-1 mb-6">
-                    {[...Array(5)].map((_,i) => <Heart key={i} fill="#e11d48" className="text-rose-600 animate-bounce" size={16} style={{animationDelay: `${i*100}ms`}} />)}
-                </div>
-                <button onClick={next} className="bg-rose-600 text-white px-12 py-4 rounded-2xl font-bold shadow-lg">Final Celebration! 🥳</button>
-              </div>
-            </PageWrapper>
-          )}
-
-          {currentPage === 9 && (
-            <PageWrapper title="Duggu is Happy!">
-              <div className="text-center">
-                <div className="relative inline-block mb-6">
-                    <Rocket className="text-rose-500 absolute -top-10 -right-10 animate-bounce" size={40} />
-                    <img 
-                      src={GIFS.dancing} 
-                      className="w-40 h-40 mx-auto rounded-full border-8 border-white shadow-2xl object-cover" 
-                      alt="Happy Party" 
-                      onError={(e) => e.target.src = "https://media.giphy.com/media/l41lI4bYucsjjg0KY/giphy.gif"}
-                    />
-                </div>
-                <h1 className="text-5xl font-black text-rose-600 mb-2 tracking-tighter">YESSS! 🎉</h1>
-                <p className="font-bold text-rose-900 text-lg">Mission: Maafi Accomplished</p>
-                <div className="mt-8 bg-rose-50 p-4 rounded-2xl border border-rose-100 italic text-xs text-rose-400">
-                    "Duggu loves Buggu more than he loves Sleeping. (And that's a lot!)"
-                </div>
-                <div className="mt-8 flex justify-center gap-4">
-                  <div className="p-3 bg-white rounded-full shadow-md animate-spin-slow"><Sparkles className="text-orange-400" /></div>
-                  <div className="p-3 bg-white rounded-full shadow-md animate-bounce"><Heart fill="#e11d48" className="text-rose-600" /></div>
-                  <div className="p-3 bg-white rounded-full shadow-md animate-spin-slow"><Sparkles className="text-orange-400" /></div>
-                </div>
-              </div>
-            </PageWrapper>
-          )}
-
-        </div>
-
-        {/* Navigation Controls */}
-        <div className="mt-8 flex justify-between items-center relative z-20">
-          <button 
-            onClick={prev} 
-            disabled={currentPage === 0}
-            className={`p-4 rounded-2xl bg-white shadow-sm text-gray-400 disabled:opacity-0 transition-all active:scale-90 border border-gray-50`}
-          >
-            <ChevronLeft size={20} />
-          </button>
-          
-          <button onClick={toggleMusic} className="bg-white/80 p-4 rounded-full shadow-lg text-rose-500 transition-all hover:scale-110">
-            {isPlaying ? <Volume2 size={24} /> : <VolumeX size={24} />}
-          </button>
-
-          <button 
-            onClick={next} 
-            disabled={currentPage === pages.length - 1}
-            className={`p-4 rounded-2xl bg-white shadow-sm text-gray-400 disabled:opacity-0 transition-all active:scale-90 border border-gray-50`}
-          >
-            <ChevronRight size={20} />
-          </button>
-        </div>
-      </main>
-
-      {/* Luxury Footer */}
-      <footer className="fixed bottom-6 left-0 w-full text-center z-50">
-        <p className="text-[10px] text-gray-300 uppercase tracking-[0.5em] font-bold">
-          Made with 0.1% Brain & 100% Love by <span className="text-rose-400">Duggu</span>
-        </p>
-      </footer>
-
-      <style>
-        {`
-          @keyframes spin-slow {
+        @keyframes spin-slow {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
-          }
-          .animate-spin-slow {
-            animation: spin-slow 12s linear infinite;
-          }
-        `}
-      </style>
-    </div>
-  );
-};
+        }
 
-export default App;
+        .animate-spin-slow {
+            animation: spin-slow 12s linear infinite;
+        }
+
+        .no-button-active {
+            position: fixed !important;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 9999;
+        }
+
+        .progress-dot {
+            transition: all 0.5s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Floating Background Decor -->
+    <div id="hearts-container"></div>
+    <div class="fixed inset-0 pointer-events-none opacity-20">
+        <div class="absolute top-0 left-0 w-96 h-96 bg-rose-200 rounded-full blur-[100px] -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-orange-100 rounded-full blur-[100px] translate-x-1/2 translate-y-1/2"></div>
+    </div>
+
+    <!-- Header / Progress dots -->
+    <div class="fixed top-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2" id="progress-dots">
+        <!-- Dots injected by JS -->
+    </div>
+
+    <!-- Main Experience Card -->
+    <main class="max-w-xl w-full relative z-10">
+        <div class="glass p-8 md:p-10 rounded-[40px] min-h-[550px] flex flex-col justify-center relative overflow-hidden">
+            
+            <!-- Page 0: Intro -->
+            <div class="page active flex-col items-center text-center" id="page-0">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Welcome Buggu</span>
+                <div class="mb-6 relative">
+                    <img src="https://media.giphy.com/media/v6aOebdEG5wOf6v0lp/giphy.gif" class="w-32 h-32 rounded-full border-4 border-white shadow-xl" alt="Sad">
+                    <div class="absolute -top-2 -right-2 bg-yellow-400 p-2 rounded-full animate-ping opacity-75"></div>
+                </div>
+                <h1 class="text-3xl font-black text-rose-900 mb-4 tracking-tight">System Alert: Buggu is Angry!</h1>
+                <p class="text-gray-500 mb-8 italic text-sm">"Warning: Insaan galti karta hai, par Duggu ne PHD ki hai."</p>
+                <button onclick="changePage(1)" class="bg-rose-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg hover:rotate-2 transition-all">Start Rescue Mission 🚒</button>
+            </div>
+
+            <!-- Page 1: Audit -->
+            <div class="page flex-col items-center w-full" id="page-1">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Gadha Audit</span>
+                <div class="w-full bg-orange-50 p-6 rounded-3xl border border-orange-100 mb-6">
+                    <h3 class="font-bold text-orange-800 flex items-center gap-2 mb-4"><i class="fas fa-brain"></i> Brain Cell Count: 1.5</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between text-[10px] font-bold uppercase text-orange-400"><span>Confused State</span><span>100%</span></div>
+                        <div class="h-1.5 bg-white rounded-full overflow-hidden"><div class="h-full bg-orange-400 w-full animate-pulse"></div></div>
+                        <p class="text-xs text-orange-700 leading-relaxed italic">"Audit Result: Duggu is 100% Gadha, but he's YOUR Gadha. Return policy expired."</p>
+                    </div>
+                </div>
+                <img src="https://media.giphy.com/media/3o7TKSj0E7KNYS26mk/giphy.gif" class="w-24 h-24 rounded-2xl opacity-80 mb-6 shadow-sm" alt="Confused">
+                <button onclick="changePage(2)" class="w-full py-4 rounded-2xl border-2 border-rose-100 font-bold text-rose-600 hover:bg-rose-50 transition-all">Next Page →</button>
+            </div>
+
+            <!-- Page 2: Meter -->
+            <div class="page flex-col items-center text-center w-full" id="page-2">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">The Maafi Meter</span>
+                <div class="text-5xl mb-4 animate-bounce">🛠️</div>
+                <p class="mb-2 text-sm text-gray-400">Click to decrease Buggu's gussa:</p>
+                <div class="relative h-32 flex flex-col items-center justify-center mb-6">
+                    <div class="text-6xl font-black text-rose-600 drop-shadow-md" id="meter-val">0%</div>
+                    <p class="text-[10px] font-bold text-rose-400 mt-2 italic uppercase tracking-wider" id="meter-text">Gussa: 7th Floor 😤</p>
+                </div>
+                <button onclick="increaseMeter()" class="bg-rose-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition-all">Reduce Anger 🧊</button>
+                <button onclick="changePage(3)" id="meter-next" class="hidden mt-6 text-green-500 font-bold underline animate-pulse">Meter Full! Aage Badhein →</button>
+            </div>
+
+            <!-- Page 3: Stats -->
+            <div class="page flex-col items-center w-full" id="page-3">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Buggu's Superpowers</span>
+                <div class="grid grid-cols-2 gap-4 w-full mb-6">
+                    <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100">
+                        <i class="fas fa-award text-rose-500 mb-2"></i>
+                        <div class="font-black text-rose-900 text-sm">Angry Pout</div>
+                        <div class="text-[9px] text-rose-400 font-bold uppercase">Deadliest Weapon</div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                        <i class="fas fa-bolt text-blue-500 mb-2"></i>
+                        <div class="font-black text-blue-900 text-sm">Gossip Speed</div>
+                        <div class="text-[9px] text-blue-400 font-bold uppercase">Faster than 5G</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100">
+                        <i class="fas fa-ghost text-purple-500 mb-2"></i>
+                        <div class="font-black text-purple-900 text-sm">Cuteness</div>
+                        <div class="text-[9px] text-purple-400 font-bold uppercase">Illegal in India</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-2xl border border-green-100">
+                        <i class="fas fa-mug-hot text-green-500 mb-2"></i>
+                        <div class="font-black text-green-900 text-sm">Lazy Mode</div>
+                        <div class="text-[9px] text-green-400 font-bold uppercase">Pro Level</div>
+                    </div>
+                </div>
+                <button onclick="changePage(4)" class="w-full py-4 bg-white border border-rose-100 rounded-2xl font-bold text-rose-500 shadow-sm hover:bg-rose-50 transition-all">Next Page →</button>
+            </div>
+
+            <!-- Page 4: Vouchers -->
+            <div class="page flex-col items-center w-full" id="page-4">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Loot Lo Store</span>
+                <div class="space-y-3 w-full">
+                    <div class="bg-gradient-to-r from-rose-50 to-white border-2 border-dashed border-rose-200 p-4 rounded-2xl flex justify-between items-center">
+                        <div><div class="font-bold text-rose-800 text-sm">1 Free Head Massage</div><div class="text-[9px] text-gray-400 uppercase font-bold italic">Jab tak Buggu so na jaye</div></div>
+                        <i class="fas fa-ticket text-rose-300"></i>
+                    </div>
+                    <div class="bg-gradient-to-r from-rose-50 to-white border-2 border-dashed border-rose-200 p-4 rounded-2xl flex justify-between items-center">
+                        <div><div class="font-bold text-rose-800 text-sm">Gossip Listening Voucher</div><div class="text-[9px] text-gray-400 uppercase font-bold italic">Bina neend aaye listening</div></div>
+                        <i class="fas fa-ticket text-rose-300"></i>
+                    </div>
+                    <div class="bg-gradient-to-r from-rose-50 to-white border-2 border-dashed border-rose-200 p-4 rounded-2xl flex justify-between items-center">
+                        <div><div class="font-bold text-rose-800 text-sm">Accept Fault Voucher</div><div class="text-[9px] text-gray-400 uppercase font-bold italic">Duggu will say 'I am wrong'</div></div>
+                        <i class="fas fa-ticket text-rose-300"></i>
+                    </div>
+                </div>
+                <button onclick="changePage(5)" class="w-full py-4 mt-6 bg-rose-600 text-white rounded-2xl font-bold shadow-lg">Collect All & Next →</button>
+            </div>
+
+            <!-- Page 5: The Trap -->
+            <div class="page flex-col items-center text-center w-full" id="page-5">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">The Trap</span>
+                <img src="https://media.giphy.com/media/T86lbLX6U7v738L2vj/giphy.gif" class="w-32 h-32 mx-auto rounded-full mb-6 shadow-2xl border-4 border-white" alt="Waiting">
+                <h2 class="text-2xl font-black mb-10 text-rose-900">Maaf kiya Buggu?</h2>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="changePage(6)" class="bg-green-500 text-white px-10 py-4 rounded-2xl font-bold shadow-lg transform hover:scale-110 active:scale-95 transition-all">Haan! 😍</button>
+                    <button id="noBtn" onmouseover="moveNoBtn()" onclick="moveNoBtn()" class="bg-red-500 text-white px-10 py-4 rounded-2xl font-bold shadow-lg">No 🥺</button>
+                </div>
+            </div>
+
+            <!-- Page 6: Bonding -->
+            <div class="page flex-col items-center text-center w-full" id="page-6">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Our Bond</span>
+                <div class="flex justify-center items-center gap-3 mb-8">
+                    <div class="bg-rose-100 p-6 rounded-3xl font-black text-rose-600 text-xl shadow-inner border border-rose-200">BUGGU</div>
+                    <div class="animate-pulse text-rose-500"><i class="fas fa-heart text-3xl"></i></div>
+                    <div class="bg-gray-900 p-6 rounded-3xl font-black text-white text-xl shadow-lg">GADHA</div>
+                </div>
+                <div class="bg-rose-50 p-6 rounded-3xl italic text-rose-700 text-sm leading-relaxed border border-rose-100">
+                    "Relationship goal: Main galti karunga, aap gussa karogi, phir main gadhon wali shakkar banaunga, aur aap maan jaogi."
+                </div>
+                <button onclick="changePage(7)" class="mt-8 text-rose-400 font-bold uppercase tracking-widest text-[10px] hover:text-rose-600 transition-colors">See Promises →</button>
+            </div>
+
+            <!-- Page 7: Promises -->
+            <div class="page flex-col items-center w-full" id="page-7">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Fake Promises Store</span>
+                <ul class="text-sm space-y-4 w-full">
+                    <li class="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50">
+                        <span class="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
+                        <div class="text-gray-700 font-medium text-xs">Ab se Duggu "Smart" banne ki acting karega. <br/><span class="text-[9px] text-rose-300 italic">(Hardware limited hai, software try karega)</span></div>
+                    </li>
+                    <li class="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50">
+                        <span class="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">2</span>
+                        <div class="text-gray-700 font-medium text-xs">Galti hone par turant "Murga" ban jaunga. <br/><span class="text-[9px] text-rose-300 italic">(Bina bole, khud se)</span></div>
+                    </li>
+                    <li class="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50">
+                        <span class="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">3</span>
+                        <div class="text-gray-700 font-medium text-xs">Aapko boring nahi hone dunga kabhi. <br/><span class="text-[9px] text-rose-300 italic">(Apne gadhapan se entertain karunga)</span></div>
+                    </li>
+                </ul>
+                <button onclick="changePage(8)" class="w-full py-4 mt-4 bg-gray-900 text-white rounded-2xl font-bold shadow-xl hover:bg-black transition-all">Accept Deal & Next →</button>
+            </div>
+
+            <!-- Page 8: Note -->
+            <div class="page flex-col items-center text-center w-full" id="page-8">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Duggu's Heart</span>
+                <h2 class="text-3xl font-bold text-rose-900 mb-6 italic" style="font-family: 'Dancing Script', cursive;">"Pyari Buggu,"</h2>
+                <div class="text-gray-600 text-sm leading-relaxed mb-10 italic bg-white/40 p-6 rounded-3xl border border-white/50">
+                    "Galti insaan se hoti hai, aur main toh donkey hoon. Aapki hasi ke bina Duggu's brain is 0% battery. Maan jao na, mera pyara bachcha?"
+                </div>
+                <div class="flex justify-center gap-1 mb-6 text-rose-500">
+                    <i class="fas fa-heart animate-bounce"></i>
+                    <i class="fas fa-heart animate-bounce" style="animation-delay: 0.1s"></i>
+                    <i class="fas fa-heart animate-bounce" style="animation-delay: 0.2s"></i>
+                </div>
+                <button onclick="changePage(9)" class="bg-rose-600 text-white px-12 py-4 rounded-2xl font-bold shadow-lg">Final Celebration! 🥳</button>
+            </div>
+
+            <!-- Page 9: Final -->
+            <div class="page flex-col items-center text-center w-full" id="page-9">
+                <span class="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full border border-rose-100">Success</span>
+                <div class="relative inline-block mb-6">
+                    <i class="fas fa-rocket text-rose-500 absolute -top-10 -right-10 animate-bounce text-4xl"></i>
+                    <img src="https://media.giphy.com/media/Wv9kcISbTN0BKGqK6l/giphy.gif" class="w-40 h-40 mx-auto rounded-full border-8 border-white shadow-2xl object-cover" alt="Happy">
+                </div>
+                <h1 class="text-5xl font-black text-rose-600 mb-2 tracking-tighter">YESSS! 🎉</h1>
+                <p class="font-bold text-rose-900 text-lg">Mission: Maafi Accomplished</p>
+                <div class="mt-8 bg-rose-50 p-4 rounded-2xl border border-rose-100 italic text-[10px] text-rose-400">
+                    "Duggu loves Buggu more than he loves Sleeping."
+                </div>
+                <div class="mt-8 flex justify-center gap-4">
+                    <i class="fas fa-sparkles text-orange-400 animate-spin-slow"></i>
+                    <i class="fas fa-heart text-rose-600 animate-bounce text-2xl"></i>
+                    <i class="fas fa-sparkles text-orange-400 animate-spin-slow"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="mt-8 flex justify-between items-center relative z-20">
+            <button onclick="prevPage()" id="prev-btn" class="p-4 rounded-2xl bg-white shadow-md text-gray-400 opacity-0 pointer-events-none transition-all active:scale-90 border border-gray-50">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <button onclick="toggleMusic()" id="music-btn" class="bg-white/80 p-4 rounded-full shadow-lg text-rose-500 transition-all hover:scale-110">
+                <i class="fas fa-volume-xmark" id="music-icon"></i>
+            </button>
+
+            <button onclick="nextPage()" id="next-btn" class="p-4 rounded-2xl bg-white shadow-md text-gray-400 transition-all active:scale-90 border border-gray-50">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer Credit -->
+    <footer class="fixed bottom-6 left-0 w-full text-center z-50">
+        <p class="text-[10px] text-gray-300 uppercase tracking-[0.5em] font-bold">
+            Made with 0.1% Brain & 100% Love by <span class="text-rose-400">Duggu</span>
+        </p>
+    </footer>
+
+    <script>
+        let currentPage = 0;
+        const totalPages = 10;
+        let isPlaying = false;
+        let maafiMeter = 0;
+        let noCount = 0;
+
+        // Initialize Progress Dots
+        const dotsContainer = document.getElementById('progress-dots');
+        for (let i = 0; i < totalPages; i++) {
+            const dot = document.createElement('div');
+            dot.className = `progress-dot h-1.5 rounded-full ${i === 0 ? 'w-6 bg-rose-500' : 'w-2 bg-rose-200'}`;
+            dot.id = `dot-${i}`;
+            dotsContainer.appendChild(dot);
+        }
+
+        // Floating Hearts
+        function spawnHeart() {
+            const heart = document.createElement('i');
+            heart.className = 'fas fa-heart floating-heart';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 5) + 's';
+            document.getElementById('hearts-container').appendChild(heart);
+            setTimeout(() => heart.remove(), 8000);
+        }
+        setInterval(spawnHeart, 600);
+
+        function updateUI() {
+            // Toggle Pages
+            document.querySelectorAll('.page').forEach((p, i) => {
+                p.classList.toggle('active', i === currentPage);
+            });
+
+            // Update Dots
+            for (let i = 0; i < totalPages; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i <= currentPage) {
+                    dot.classList.add('bg-rose-500', 'w-6');
+                    dot.classList.remove('bg-rose-200', 'w-2');
+                } else {
+                    dot.classList.remove('bg-rose-500', 'w-6');
+                    dot.classList.add('bg-rose-200', 'w-2');
+                }
+            }
+
+            // Controls visibility
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            prevBtn.style.opacity = currentPage === 0 ? '0' : '1';
+            prevBtn.style.pointerEvents = currentPage === 0 ? 'none' : 'auto';
+            nextBtn.style.opacity = (currentPage === totalPages - 1 || currentPage === 5) ? '0' : '1';
+            nextBtn.style.pointerEvents = (currentPage === totalPages - 1 || currentPage === 5) ? 'none' : 'auto';
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                updateUI();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                updateUI();
+            }
+        }
+
+        function changePage(idx) {
+            currentPage = idx;
+            updateUI();
+        }
+
+        function increaseMeter() {
+            if (maafiMeter < 100) {
+                maafiMeter += 10;
+                document.getElementById('meter-val').innerText = maafiMeter + '%';
+                
+                const texts = [
+                    "Gussa: 7th Floor 😤", "Gussa: 7th Floor 😤",
+                    "Thoda pighal rahi ho? 😏", "Thoda pighal rahi ho? 😏",
+                    "Bas thoda aur! Maafi nikal rahi hai! 🌸", "Almost there! 👂",
+                    "Kaan ready hain Duggu ke! 👂", "FULL MAAFI! Party? 🎉"
+                ];
+                
+                document.getElementById('meter-text').innerText = texts[Math.min(Math.floor(maafiMeter/12), texts.length - 1)];
+                
+                if (maafiMeter === 100) {
+                    document.getElementById('meter-next').classList.remove('hidden');
+                }
+            }
+        }
+
+        function moveNoBtn() {
+            noCount++;
+            const btn = document.getElementById('noBtn');
+            btn.classList.add('no-button-active');
+            
+            const x = Math.random() * (window.innerWidth - 120);
+            const y = Math.random() * (window.innerHeight - 50);
+            
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            
+            if (noCount > 3) btn.innerText = "Still No? 😭";
+            if (noCount > 6) btn.innerText = "Maan jao na please... 🥺";
+        }
+
+        function toggleMusic() {
+            const audio = document.getElementById('bgMusic');
+            const icon = document.getElementById('music-icon');
+            const btn = document.getElementById('music-btn');
+            
+            if (isPlaying) {
+                audio.pause();
+                icon.className = 'fas fa-volume-xmark';
+                btn.classList.remove('animate-spin-slow');
+            } else {
+                audio.play().catch(e => console.log("Click required for audio"));
+                icon.className = 'fas fa-volume-high';
+                btn.classList.add('animate-spin-slow');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Auto-fix no button if screen resized
+        window.addEventListener('resize', () => {
+            const btn = document.getElementById('noBtn');
+            if (btn.classList.contains('no-button-active')) {
+                btn.style.left = '50%';
+                btn.style.top = '50%';
+                btn.classList.remove('no-button-active');
+                btn.style.position = 'relative';
+            }
+        });
+    </script>
+</body>
+</html>
