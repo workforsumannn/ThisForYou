@@ -1,391 +1,332 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Premium Valentine's Surprise</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --velvet: #4a0404;
-            --gold: #d4af37;
-            --cream: #fffaf0;
-        }
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Heart, Volume2, VolumeX, Sparkles, Stars, Gift, Music, 
+  ChevronRight, ChevronLeft, Award, Coffee, Zap, Info, ShieldCheck,
+  Ghost, Laugh, Trash2, Rocket
+} from 'lucide-react';
 
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #0d0202;
-            font-family: 'Montserrat', sans-serif;
-            color: white;
-            user-select: none;
-        }
+const App = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const [noCount, setNoCount] = useState(0);
+  const [noButtonPos, setNoButtonPos] = useState({ x: 0, y: 0 });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [forgiveProgress, setForgiveProgress] = useState(0);
+  const audioRef = useRef(null);
 
-        #canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: radial-gradient(circle at center, #2c0000 0%, #0d0202 100%);
-        }
+  const pages = [
+    "Intro", "Gadha Audit", "Maafi Meter", "Buggu Stats", 
+    "Loot Lo", "The Trap", "Bonding", "Gadha Promises", "Emotional Blackmail", "Party Time"
+  ];
 
-        .glass-card {
-            background: rgba(20, 5, 5, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        }
+  // Using more robust and direct GIF URLs
+  const GIFS = {
+    sad: "sad.gif",
+    wait: "wait.gif",
+    dancing: "dancing.gif",
+    confused: "confused.gif"
+  };
 
-        /* Entry Overlay */
-        #entry-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background: #0d0202;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+  const toggleMusic = () => {
+    if (isPlaying) { audioRef.current.pause(); } 
+    else { audioRef.current.play().catch(() => {}); }
+    setIsPlaying(!isPlaying);
+  };
 
-        .gold-ring {
-            width: 120px;
-            height: 120px;
-            border: 1px solid var(--gold);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.5s ease;
-            position: relative;
-        }
+  const next = () => setCurrentPage((prev) => Math.min(prev + 1, pages.length - 1));
+  const prev = () => setCurrentPage((prev) => Math.max(prev - 1, 0));
 
-        .gold-ring:hover {
-            box-shadow: 0 0 30px var(--gold);
-            transform: scale(1.05);
-        }
+  const moveNoButton = () => {
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 50);
+    setNoButtonPos({ x, y });
+    setNoCount(prev => prev + 1);
+  };
 
-        .gold-ring::before {
-            content: '';
-            position: absolute;
-            inset: -5px;
-            border: 1px solid var(--gold);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
+  const getMeterText = () => {
+    if (forgiveProgress < 20) return "Abhi to gussa 7th floor pe hai! 😤";
+    if (forgiveProgress < 50) return "Thoda thoda pighal rahi ho? 😏";
+    if (forgiveProgress < 80) return "Bas thoda aur! Maafi ki khushbu aa rahi hai! 🌸";
+    if (forgiveProgress < 100) return "Almost there! Duggu ke kaan ready hain khichne ke liye! 👂";
+    return "FULL MAAFI! Party shuru karein? 🎉";
+  };
 
-        @keyframes ping {
-            75%, 100% { transform: scale(1.5); opacity: 0; }
-        }
-
-        /* Premium Envelope */
-        .envelope-container {
-            perspective: 1000px;
-            z-index: 10;
-        }
-
-        .envelope-wrapper {
-            position: relative;
-            width: 340px;
-            height: 220px;
-            background-color: #800000;
-            cursor: pointer;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .envelope-wrapper.open {
-            transform: translateY(120px) rotateX(10deg);
-        }
-
-        .envelope-top {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #800000;
-            z-index: 3;
-            clip-path: polygon(0 0, 50% 50%, 100% 0);
-            transition: transform 0.6s 0.2s;
-            transform-origin: top;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .envelope-wrapper.open .envelope-top {
-            transform: rotateX(180deg);
-            z-index: 0;
-        }
-
-        .wax-seal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: #b22222;
-            border-radius: 50%;
-            z-index: 4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 0 10px rgba(0,0,0,0.2);
-            border: 2px solid #8b0000;
-            transition: opacity 0.4s;
-        }
-
-        .wax-seal span {
-            color: var(--gold);
-            font-family: 'Playfair Display';
-            font-size: 24px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-
-        .envelope-wrapper.open .wax-seal {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .letter {
-            position: absolute;
-            bottom: 5px;
-            left: 5%;
-            width: 90%;
-            height: 90%;
-            background: var(--cream);
-            background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
-            background-size: 100% 1.5em;
-            transition: all 0.8s 0.3s;
-            padding: 30px 20px;
-            color: #2c0000;
-            border-radius: 2px;
-            z-index: 1;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        .envelope-wrapper.open .letter {
-            transform: translateY(-160px) scale(1.1);
-            height: 380px;
-            z-index: 5;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .hidden-content {
-            opacity: 0;
-            transition: opacity 2s ease;
-        }
-
-        .show {
-            opacity: 1 !important;
-        }
-
-        .typewriter-text {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.4rem;
-            line-height: 1.6;
-            min-height: 100px;
-        }
-    </style>
-</head>
-<body>
-
-    <canvas id="canvas"></canvas>
-
-    <!-- Entry Screen -->
-    <div id="entry-overlay">
-        <div class="gold-ring" onclick="startSurprise()">
-            <span class="text-3xl">❤️</span>
-        </div>
-        <p class="mt-12 text-gold font-light tracking-[0.5em] uppercase text-sm animate-pulse">Enter My Heart</p>
+  const PageWrapper = ({ children, title }) => (
+    <div className="animate-in fade-in slide-in-from-right-8 duration-500 h-full flex flex-col items-center justify-center">
+      <h2 className="text-rose-400 font-bold uppercase tracking-widest text-[10px] mb-4 bg-rose-50 px-3 py-1 rounded-full">{title}</h2>
+      {children}
     </div>
+  );
 
-    <!-- Main Content -->
-    <main class="relative z-10 min-h-screen flex flex-col items-center justify-center p-6 hidden-content" id="main-content">
-        
-        <div class="text-center mb-16">
-            <h1 class="text-6xl md:text-8xl font-['Playfair_Display'] mb-4 italic text-white drop-shadow-2xl">Happy Valentine's</h1>
-            <div class="h-[1px] w-24 bg-gold mx-auto mb-4"></div>
-            <p class="text-lg font-light text-[#d4af37] tracking-[0.4em] uppercase">Forever & Always</p>
-        </div>
+  return (
+    <div className="min-h-screen bg-[#fffafa] text-gray-800 font-sans selection:bg-rose-200 overflow-hidden relative">
+      <audio ref={audioRef} loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" />
 
-        <div class="envelope-container">
-            <div class="envelope-wrapper" id="envelope" onclick="toggleLetter()">
-                <div class="envelope-top"></div>
-                <div class="wax-seal">
-                    <span>V</span>
+      {/* Header / Progress */}
+      <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2">
+        {pages.map((_, i) => (
+          <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i <= currentPage ? 'w-6 bg-rose-500' : 'w-2 bg-rose-200'}`} />
+        ))}
+      </div>
+
+      <main className="max-w-xl mx-auto h-screen flex flex-col justify-center p-6 relative z-10">
+        <div className="bg-white/60 backdrop-blur-2xl border border-white p-8 rounded-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.05)] min-h-[520px] relative overflow-hidden flex flex-col justify-center">
+          
+          {currentPage === 0 && (
+            <PageWrapper title="Danger Warning">
+              <div className="text-center">
+                <div className="mb-6 relative inline-block">
+                    <img 
+                      src={GIFS.sad} 
+                      className="w-32 h-32 rounded-full border-4 border-rose-100 object-cover" 
+                      alt="Sad Duggu"
+                      onError={(e) => e.target.src = "https://media.giphy.com/media/OPU6wUKARAyGk/giphy.gif"}
+                    />
+                    <div className="absolute -top-2 -right-2 bg-yellow-400 p-2 rounded-full animate-ping opacity-75"></div>
                 </div>
-                <div class="letter">
-                    <div id="letter-content" class="typewriter-text"></div>
-                    <div class="mt-6 text-right font-['Dancing_Script'] text-2xl opacity-0 transition-opacity duration-1000" id="letter-sign">
-                        With all my love,<br>
-                        <span class="text-red-800 text-3xl"></span>
+                <h1 className="text-3xl font-black text-rose-900 mb-4 tracking-tight">System Alert: Buggu is Angry!</h1>
+                <p className="text-gray-500 mb-8 italic text-sm">"Warning: Insaan galti karta hai, par Duggu ne PHD ki hai."</p>
+                <button onClick={next} className="bg-rose-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg hover:rotate-2 transition-all">Start Rescue Mission 🚒</button>
+              </div>
+            </PageWrapper>
+          )}
+
+          {currentPage === 1 && (
+            <PageWrapper title="Duggu's Audit Report">
+              <div className="w-full space-y-4">
+                <div className="bg-orange-50 p-6 rounded-3xl border border-orange-100">
+                  <h3 className="font-bold text-orange-800 flex items-center gap-2 mb-4"><Laugh size={18} /> Brain Cell Count: 1.5</h3>
+                  <div className="space-y-4">
+                    <div className="flex justify-between text-[10px] font-bold uppercase text-orange-400"><span>Confused State</span><span>100%</span></div>
+                    <div className="h-1.5 bg-white rounded-full"><div className="h-full bg-orange-400 w-full animate-pulse" /></div>
+                    <p className="text-xs text-orange-700 leading-relaxed italic">"Audit Result: Duggu is 100% Gadha, but he's YOUR Gadha. Return policy expired."</p>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                   <img src={GIFS.confused} className="w-24 h-24 rounded-2xl opacity-80" alt="Audit" />
+                </div>
+                <button onClick={next} className="w-full py-4 rounded-2xl border-2 border-rose-100 font-bold text-rose-600 hover:bg-rose-50 transition-all">Check Maafi Meter →</button>
+              </div>
+            </PageWrapper>
+          )}
+
+          {currentPage === 2 && (
+            <PageWrapper title="The Maafi Meter">
+              <div className="text-center w-full">
+                <div className="text-5xl mb-4 animate-bounce">🛠️</div>
+                <p className="mb-2 text-sm text-gray-400">Is button ko ghisne se gussa kam hoga:</p>
+                <div className="relative h-32 flex flex-col items-center justify-center mb-6">
+                  <div className="text-6xl font-black text-rose-600 drop-shadow-md">{forgiveProgress}%</div>
+                  <p className="text-xs font-bold text-rose-400 mt-2 italic">{getMeterText()}</p>
+                </div>
+                <button 
+                  onClick={() => setForgiveProgress(p => Math.min(p + 10, 100))}
+                  className="bg-rose-600 text-white px-10 py-4 rounded-2xl font-bold shadow-lg active:scale-90 transition-all"
+                >
+                  Click to Cool Down 🧊
+                </button>
+                {forgiveProgress === 100 && <button onClick={next} className="mt-6 block mx-auto text-green-500 font-bold underline animate-pulse">Meter Full! Aage badho →</button>}
+              </div>
+            </PageWrapper>
+          )}
+
+          {currentPage === 3 && (
+            <PageWrapper title="Buggu's Hidden Stats">
+              <div className="grid grid-cols-2 gap-4 w-full">
+                <div className="bg-rose-50 p-4 rounded-2xl border border-rose-100">
+                  <Award className="text-rose-500 mb-2" size={20} />
+                  <div className="font-black text-rose-900 text-sm">Angry Pout</div>
+                  <div className="text-[10px] text-rose-400 font-bold uppercase">Deadliest Weapon</div>
+                </div>
+                <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">
+                  <Zap className="text-blue-500 mb-2" size={20} />
+                  <div className="font-black text-blue-900 text-sm">Gossip Speed</div>
+                  <div className="text-[10px] text-blue-400 font-bold uppercase">Faster than 5G</div>
+                </div>
+                <div className="bg-purple-50 p-4 rounded-2xl border border-purple-100">
+                  <Ghost className="text-purple-500 mb-2" size={20} />
+                  <div className="font-black text-purple-900 text-sm">Cuteness</div>
+                  <div className="text-[10px] text-purple-400 font-bold uppercase">Illegal in 50 states</div>
+                </div>
+                <div className="bg-green-50 p-4 rounded-2xl border border-green-100">
+                  <Coffee className="text-green-500 mb-2" size={20} />
+                  <div className="font-black text-green-900 text-sm">Lazy Mode</div>
+                  <div className="text-[10px] text-green-400 font-bold uppercase">Pro Level</div>
+                </div>
+                <button onClick={next} className="col-span-2 py-4 mt-2 bg-white border border-rose-100 rounded-2xl font-bold text-rose-500 text-sm">Impressive, na? Next Page →</button>
+              </div>
+            </PageWrapper>
+          )}
+
+          {currentPage === 4 && (
+            <PageWrapper title="Duggu's Bribe Store">
+              <div className="space-y-3 w-full">
+                {[
+                  { t: "1 Free Head Massage", c: "Jab tak Buggu so na jaye" },
+                  { t: "Gossip Listening Session", c: "Without yawning promise" },
+                  { t: "Accept All Faults Voucher", c: "Duggu will say 'Meri galti thi'" }
+                ].map((v, i) => (
+                  <div key={i} className="bg-gradient-to-r from-rose-50 to-white border-2 border-dashed border-rose-200 p-4 rounded-2xl flex justify-between items-center group hover:scale-[1.02] transition-all">
+                    <div>
+                      <div className="font-bold text-rose-800 text-sm">{v.t}</div>
+                      <div className="text-[10px] text-gray-400 uppercase font-bold italic">{v.c}</div>
                     </div>
+                    <Stars className="text-orange-300 group-hover:rotate-45 transition-transform" size={16} />
+                  </div>
+                ))}
+                <p className="text-[10px] text-center text-gray-400 italic mt-4">*No conditions apply. Buggu is Boss.*</p>
+                <button onClick={next} className="w-full py-4 bg-rose-600 text-white rounded-2xl font-bold shadow-md">Redeem & Move On →</button>
+              </div>
+            </PageWrapper>
+          )}
+
+          {currentPage === 5 && (
+            <PageWrapper title="The Trap (Maafi?)">
+              <div className="text-center">
+                <img 
+                  src={GIFS.wait} 
+                  className="w-32 h-32 mx-auto rounded-full mb-6 shadow-2xl" 
+                  alt="Waiting" 
+                  onError={(e) => e.target.src = "https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif"}
+                />
+                <h2 className="text-2xl font-black mb-10 text-rose-900">Final Chance! Maaf kiya?</h2>
+                <div className="flex gap-4 justify-center">
+                  <button onClick={next} className="bg-green-500 text-white px-10 py-4 rounded-2xl font-bold shadow-lg transform hover:scale-110 active:scale-95 transition-all">Haan! 😍</button>
+                  <button 
+                    onMouseOver={moveNoButton}
+                    onClick={moveNoButton}
+                    style={noCount > 0 ? { position: 'fixed', left: noButtonPos.x, top: noButtonPos.y, zIndex: 1000 } : {}}
+                    className="bg-red-500 text-white px-10 py-4 rounded-2xl font-bold shadow-lg transition-all duration-200"
+                  >
+                    {noCount > 3 ? "Still No? 😭" : "No 🥺"}
+                  </button>
                 </div>
-                <div class="absolute inset-0 bg-[#900] z-[2]"></div>
-            </div>
+              </div>
+            </PageWrapper>
+          )}
+
+          {currentPage === 6 && (
+            <PageWrapper title="Our Chaotic Bond">
+              <div className="text-center w-full">
+                <div className="flex justify-center items-center gap-2 mb-8">
+                  <div className="bg-rose-100 p-6 rounded-3xl font-black text-rose-600 text-xl shadow-inner border border-rose-200">BUGGU</div>
+                  <div className="animate-pulse text-rose-500"><Heart fill="currentColor" size={32} /></div>
+                  <div className="bg-gray-900 p-6 rounded-3xl font-black text-white text-xl shadow-lg">GADHA</div>
+                </div>
+                <div className="bg-rose-50 p-6 rounded-3xl italic text-rose-700 text-sm leading-relaxed border border-rose-100">
+                  "Relationship goal: Main galti karunga, aap gussa karogi, phir main gadhon wali shakkar banaunga, aur aap maan jaogi. Repeat for 100 years."
+                </div>
+                <button onClick={next} className="mt-8 text-rose-400 font-bold uppercase tracking-widest text-[10px] hover:text-rose-600 transition-colors">See Promises →</button>
+              </div>
+            </PageWrapper>
+          )}
+
+          {currentPage === 7 && (
+            <PageWrapper title="Honest Promises Store">
+              <ul className="text-sm space-y-4 w-full">
+                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50 group">
+                  <span className="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">1</span>
+                  <div className="text-gray-700">Ab se Duggu "Smart" banne ki acting karega. <br/><span className="text-[10px] text-rose-300 font-bold italic">(Hardware limited hai, software try karega)</span></div>
+                </li>
+                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50 group">
+                  <span className="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">2</span>
+                  <div className="text-gray-700">Galti hone par turant "Murga" ban jaunga. <br/><span className="text-[10px] text-rose-300 font-bold italic">(Bina bole, khud se)</span></div>
+                </li>
+                <li className="flex gap-4 items-center bg-white p-4 rounded-2xl shadow-sm border border-rose-50 group">
+                  <span className="bg-rose-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold">3</span>
+                  <div className="text-gray-700">Buggu ko kabhi boring feel nahi hone dunga. <br/><span className="text-[10px] text-rose-300 font-bold italic">(Apne gadhapan se entertain karunga)</span></div>
+                </li>
+                <button onClick={next} className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold mt-2 shadow-xl hover:bg-black transition-all">Accept Deal & Next →</button>
+              </ul>
+            </PageWrapper>
+          )}
+
+          {currentPage === 8 && (
+            <PageWrapper title="Emotional Blackmail Time">
+              <div className="text-center">
+                <h2 className="text-3xl font-serif text-rose-900 mb-6 italic">"Pyari Buggu,"</h2>
+                <div className="text-gray-600 text-sm leading-relaxed mb-10 italic bg-white/40 p-6 rounded-3xl">
+                  "Dekho, main gadha hoon, donkey hoon, duffu hoon... par aapka favorite hoon na? Aapki hasi ke bina Duggu's brain is 0% battery. Maan jao, warna main dharne pe baith jaunga (with snacks)!"
+                </div>
+                <div className="flex justify-center gap-1 mb-6">
+                    {[...Array(5)].map((_,i) => <Heart key={i} fill="#e11d48" className="text-rose-600 animate-bounce" size={16} style={{animationDelay: `${i*100}ms`}} />)}
+                </div>
+                <button onClick={next} className="bg-rose-600 text-white px-12 py-4 rounded-2xl font-bold shadow-lg">Final Celebration! 🥳</button>
+              </div>
+            </PageWrapper>
+          )}
+
+          {currentPage === 9 && (
+            <PageWrapper title="Duggu is Happy!">
+              <div className="text-center">
+                <div className="relative inline-block mb-6">
+                    <Rocket className="text-rose-500 absolute -top-10 -right-10 animate-bounce" size={40} />
+                    <img 
+                      src={GIFS.dancing} 
+                      className="w-40 h-40 mx-auto rounded-full border-8 border-white shadow-2xl object-cover" 
+                      alt="Happy Party" 
+                      onError={(e) => e.target.src = "https://media.giphy.com/media/l41lI4bYucsjjg0KY/giphy.gif"}
+                    />
+                </div>
+                <h1 className="text-5xl font-black text-rose-600 mb-2 tracking-tighter">YESSS! 🎉</h1>
+                <p className="font-bold text-rose-900 text-lg">Mission: Maafi Accomplished</p>
+                <div className="mt-8 bg-rose-50 p-4 rounded-2xl border border-rose-100 italic text-xs text-rose-400">
+                    "Duggu loves Buggu more than he loves Sleeping. (And that's a lot!)"
+                </div>
+                <div className="mt-8 flex justify-center gap-4">
+                  <div className="p-3 bg-white rounded-full shadow-md animate-spin-slow"><Sparkles className="text-orange-400" /></div>
+                  <div className="p-3 bg-white rounded-full shadow-md animate-bounce"><Heart fill="#e11d48" className="text-rose-600" /></div>
+                  <div className="p-3 bg-white rounded-full shadow-md animate-spin-slow"><Sparkles className="text-orange-400" /></div>
+                </div>
+              </div>
+            </PageWrapper>
+          )}
+
         </div>
 
-        <!-- Premium Details Footer -->
-        <div class="mt-48 max-w-lg w-full glass-card p-10 text-center rounded-sm border-t-2 border-gold/30">
-            <p class="text-gold italic font-['Playfair_Display'] text-xl mb-4">"In all the world, there is no heart for me like yours."</p>
-            <div class="text-[10px] uppercase tracking-[0.3em] text-white/40">Your Suman</div>
+        {/* Navigation Controls */}
+        <div className="mt-8 flex justify-between items-center relative z-20">
+          <button 
+            onClick={prev} 
+            disabled={currentPage === 0}
+            className={`p-4 rounded-2xl bg-white shadow-sm text-gray-400 disabled:opacity-0 transition-all active:scale-90 border border-gray-50`}
+          >
+            <ChevronLeft size={20} />
+          </button>
+          
+          <button onClick={toggleMusic} className="bg-white/80 p-4 rounded-full shadow-lg text-rose-500 transition-all hover:scale-110">
+            {isPlaying ? <Volume2 size={24} /> : <VolumeX size={24} />}
+          </button>
+
+          <button 
+            onClick={next} 
+            disabled={currentPage === pages.length - 1}
+            className={`p-4 rounded-2xl bg-white shadow-sm text-gray-400 disabled:opacity-0 transition-all active:scale-90 border border-gray-50`}
+          >
+            <ChevronRight size={20} />
+          </button>
         </div>
+      </main>
 
-        <button onclick="toggleAudio()" class="fixed bottom-8 left-8 bg-black/40 hover:bg-black/60 p-4 rounded-full border border-gold/30 transition-all z-50">
-            <span id="audio-icon" class="text-gold">🔊</span>
-        </button>
-    </main>
+      {/* Luxury Footer */}
+      <footer className="fixed bottom-6 left-0 w-full text-center z-50">
+        <p className="text-[10px] text-gray-300 uppercase tracking-[0.5em] font-bold">
+          Made with 0.1% Brain & 100% Love by <span className="text-rose-400">Duggu</span>
+        </p>
+      </footer>
 
-    <audio id="bg-music" loop>
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
+      <style>
+        {`
+          @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          .animate-spin-slow {
+            animation: spin-slow 12s linear infinite;
+          }
+        `}
+      </style>
+    </div>
+  );
+};
 
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const audio = document.getElementById('bg-music');
-        let particles = [];
-        let isLetterOpen = false;
-
-        const letterText = "To My Dearest,\n\nYou are the most beautiful part of my day and the best part of my life. Every smile you share and every moment we spend together is a treasure I hold close to my heart. Thank you for being you.\n\nHappy Valentine's Day!";
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = -20;
-                this.size = Math.random() * 8 + 4;
-                this.speedX = Math.random() * 2 - 1;
-                this.speedY = Math.random() * 1.5 + 0.5;
-                this.rotation = Math.random() * 360;
-                this.rotationSpeed = Math.random() * 2 - 1;
-                this.type = Math.random() > 0.3 ? 'petal' : 'gold'; // Petal or Gold dust
-                this.opacity = Math.random() * 0.5 + 0.3;
-            }
-
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation * Math.PI / 180);
-                ctx.globalAlpha = this.opacity;
-
-                if (this.type === 'petal') {
-                    ctx.fillStyle = '#ff4d6d';
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0);
-                    ctx.bezierCurveTo(-this.size, this.size, this.size, this.size * 1.5, 0, this.size * 2);
-                    ctx.bezierCurveTo(-this.size, this.size * 1.5, -this.size, this.size, 0, 0);
-                    ctx.fill();
-                } else {
-                    ctx.fillStyle = '#d4af37';
-                    ctx.beginPath();
-                    ctx.arc(0, 0, this.size/4, 0, Math.PI * 2);
-                    ctx.fill();
-                    // Sparkle
-                    if (Math.random() > 0.95) ctx.shadowBlur = 10;
-                    ctx.shadowColor = '#d4af37';
-                }
-
-                ctx.restore();
-
-                this.y += this.speedY;
-                this.x += this.speedX + Math.sin(this.y / 50);
-                this.rotation += this.rotationSpeed;
-
-                if (this.y > canvas.height + 20) this.reset();
-            }
-        }
-
-        function init() {
-            for(let i = 0; i < 80; i++) particles.push(new Particle());
-            animate();
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => p.draw());
-            requestAnimationFrame(animate);
-        }
-
-        function startSurprise() {
-            document.getElementById('entry-overlay').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('entry-overlay').style.display = 'none';
-                document.getElementById('main-content').classList.add('show');
-            }, 1500);
-
-            audio.play().catch(() => {});
-            init();
-        }
-
-        function typeWriter(text, i, fnCallback) {
-            if (i < text.length) {
-                document.getElementById("letter-content").innerHTML = text.substring(0, i + 1) + '<span aria-hidden="true">|</span>';
-                setTimeout(() => typeWriter(text, i + 1, fnCallback), 40);
-            } else if (typeof fnCallback == 'function') {
-                setTimeout(fnCallback, 700);
-            }
-        }
-
-        function toggleLetter() {
-            const wrapper = document.getElementById('envelope');
-            if (isLetterOpen) return;
-            
-            isLetterOpen = true;
-            wrapper.classList.add('open');
-            
-            // Start typewriter after envelope finishes opening
-            setTimeout(() => {
-                typeWriter(letterText, 0, () => {
-                    document.getElementById('letter-sign').classList.remove('opacity-0');
-                    document.getElementById('letter-sign').classList.add('opacity-100');
-                    createBurst();
-                });
-            }, 1000);
-        }
-
-        function createBurst() {
-            for(let i = 0; i < 30; i++) {
-                const p = new Particle();
-                p.y = window.innerHeight / 2;
-                p.x = window.innerWidth / 2;
-                p.speedY = Math.random() * 10 - 5;
-                p.speedX = Math.random() * 10 - 5;
-                particles.push(p);
-                setTimeout(() => {
-                    const idx = particles.indexOf(p);
-                    if(idx > -1) particles.splice(idx, 1);
-                }, 2000);
-            }
-        }
-
-        function toggleAudio() {
-            if (audio.paused) {
-                audio.play();
-                document.getElementById('audio-icon').innerText = '🔊';
-            } else {
-                audio.pause();
-                document.getElementById('audio-icon').innerText = '🔇';
-            }
-        }
-    </script>
-</body>
-</html>
+export default App;
