@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BGMI Ultimate Duo Partner - Swagatika 🎮🍗</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        .font-gamer {
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .font-marker {
+            font-family: 'Permanent Marker', cursive;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #eab308;
+            border-radius: 4px;
+        }
+
+        /* Glassmorphism cyber styles */
+        .cyber-card {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(234, 179, 8, 0.15);
+        }
+
+        .cyber-card-bright {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(244, 63, 94, 0.2);
+        }
+
+        /* Neon Glow Effects */
+        .neon-gold {
+            text-shadow: 0 0 12px rgba(234, 179, 8, 0.6);
+        }
+
+        .neon-red {
+            text-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
+        }
+
+        /* Keyframe Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(234, 179, 8, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(234, 179, 8, 0.8); }
+        }
+
+        @keyframes scanline {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 2.5s infinite;
+        }
+
+        .scanline {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #eab308, transparent);
+            animation: scanline 1.8s linear infinite;
+        }
+
+        .airdrop-box {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            border: 3px solid #fef08a;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-amber-500 selection:text-black">
+
+    <!-- Background Canvas for Floating Drops & Sparkles -->
+    <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Top Action Bar -->
+    <div class="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <button id="soundToggleBtn" onclick="toggleAudio()" class="cyber-card px-4 py-2 rounded-full text-xs md:text-sm font-bold text-amber-400 flex items-center gap-2 hover:bg-slate-800 transition-all shadow-lg active:scale-95">
+            <i id="soundIcon" class="fa-solid fa-volume-high text-amber-400"></i>
+            <span id="soundLabel">Game Audio: ON</span>
+        </button>
+        <button onclick="openNameModal()" class="cyber-card p-2.5 rounded-full text-amber-400 hover:bg-slate-800 transition-all shadow-lg active:scale-95" title="Update Duo Name">
+            <i class="fa-solid fa-pen-to-square text-lg text-amber-400"></i>
+        </button>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="relative z-10 max-w-5xl mx-auto px-4 py-8 md:py-12 space-y-16 md:space-y-24">
+
+        <!-- HERO SECTION -->
+        <header class="text-center space-y-6 pt-6">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full cyber-card text-amber-400 font-bold text-xs md:text-sm tracking-widest uppercase animate-pulse-glow">
+                <i class="fa-solid fa-crosshairs text-amber-400"></i>
+                <span>BGMI Duo Partner Special Edition</span>
+            </div>
+
+            <h1 class="font-gamer text-5xl sm:text-7xl md:text-8xl font-extrabold text-white tracking-wider leading-none uppercase">
+                WINNER WINNER CHICKEN DINNER,<br>
+                <span id="heroGFName" class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-red-500 to-amber-300 neon-gold underline decoration-amber-500 decoration-wavy">
+                    SWAGATIKA
+                </span>! 🎮🍗
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 font-medium">
+                Dedicated to the ultimate BGMI Duo Buddy! The clutch queen who always drops smokes, carries the squad, and never hesitates to steal the Level 3 Helmet! 🪖🔥
+            </p>
+
+            <!-- Fun Quick Counter Pill Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 max-w-3xl mx-auto pt-4">
+                <div class="cyber-card p-4 rounded-2xl text-center transform transition duration-300 hover:scale-105 border-amber-500/40">
+                    <div class="text-3xl md:text-4xl font-extrabold text-amber-400 font-gamer tracking-wider">999+</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Chicken Dinners 🍗</div>
+                </div>
+                <div class="cyber-card p-4 rounded-2xl text-center transform transition duration-300 hover:scale-105 border-red-500/40">
+                    <div class="text-3xl md:text-4xl font-extrabold text-red-400 font-gamer tracking-wider">100%</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Loot Stealing Rate 📦</div>
+                </div>
+                <div class="cyber-card p-4 rounded-2xl text-center transform transition duration-300 hover:scale-105 border-emerald-500/40">
+                    <div class="text-3xl md:text-4xl font-extrabold text-emerald-400 font-gamer tracking-wider">∞</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Emergency Revives 🚑</div>
+                </div>
+                <div class="cyber-card p-4 rounded-2xl text-center transform transition duration-300 hover:scale-105 border-purple-500/40">
+                    <div class="text-3xl md:text-4xl font-extrabold text-purple-400 font-gamer tracking-wider">PRO LEVEL</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Pan Kill Reflexes 🍳</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 pt-4">
+                <button onclick="triggerConfettiBurst()" class="px-7 py-3.5 bg-gradient-to-r from-amber-500 to-red-600 text-black font-extrabold rounded-full shadow-lg hover:shadow-amber-500/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-parachute-box text-lg"></i>
+                    <span>Call Air Drop Confetti!</span>
+                </button>
+                <a href="#certificate" class="px-7 py-3.5 cyber-card text-amber-400 font-bold rounded-full hover:bg-slate-800 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                    <span>View Duo Gamer License</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- SECTION 1: OFFICIAL BGMI DUO REPORT CARD -->
+        <section id="certificate" class="space-y-6">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Verified BGMI Gamer Stats</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white font-gamer tracking-wide">The Official Duo License & Report Card</h2>
+            </div>
+
+            <div class="cyber-card p-6 md:p-10 rounded-3xl border-2 border-amber-500/50 relative overflow-hidden shadow-2xl">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-red-500/10 rounded-full blur-2xl"></div>
+
+                <div class="relative z-10 border-2 border-dashed border-amber-500/40 p-6 md:p-8 rounded-2xl bg-slate-900/80">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-800 pb-6 text-center md:text-left">
+                        <div>
+                            <div class="text-xs font-bold text-amber-400 tracking-widest uppercase">Battlegrounds Mobile India • Partner Registry</div>
+                            <h3 class="text-3xl md:text-4xl font-extrabold text-white font-gamer tracking-wider">Certified Conqueror Duo Companion</h3>
+                        </div>
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-red-500 flex items-center justify-center text-slate-950 text-3xl shadow-lg animate-bounce">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                    </div>
+
+                    <div class="py-6 text-center space-y-2">
+                        <p class="text-sm text-slate-400 font-medium">This document officially certifies that</p>
+                        <div id="certGFName" class="text-4xl md:text-5xl font-extrabold text-amber-400 font-gamer tracking-widest py-1 neon-gold">
+                            SWAGATIKA
+                        </div>
+                        <p class="text-sm text-slate-300 max-w-xl mx-auto">
+                            is officially certified as the <strong>#1 BGMI Duo Buddy</strong>. Authorized to snip drop loot, scream during 1v4 clutches, drive buggy into trees, and secure Chicken Dinners! 🍗
+                        </p>
+                    </div>
+
+                    <!-- Evaluation Table / Progress Bars -->
+                    <div class="space-y-4 py-4">
+                        <h4 class="font-bold text-amber-400 text-xs uppercase tracking-widest text-center md:text-left">In-Game Evaluation Metrics:</h4>
+
+                        <!-- Metric 1 -->
+                        <div>
+                            <div class="flex justify-between text-xs md:text-sm font-bold text-slate-200 mb-1">
+                                <span><i class="fa-solid fa-truck-medical text-emerald-400 mr-2"></i> Smoke Wall & Instant Revive Speed</span>
+                                <span class="text-emerald-400 font-gamer text-lg">100% (Medic God)</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-3 rounded-full w-full"></div>
+                            </div>
+                        </div>
+
+                        <!-- Metric 2 -->
+                        <div>
+                            <div class="flex justify-between text-xs md:text-sm font-bold text-slate-200 mb-1">
+                                <span><i class="fa-solid fa-box text-amber-400 mr-2"></i> Snatching Flares & AWM Drop Loot</span>
+                                <span class="text-amber-400 font-gamer text-lg">200% (Instant Snatcher)</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-amber-500 to-yellow-300 h-3 rounded-full w-full"></div>
+                            </div>
+                        </div>
+
+                        <!-- Metric 3 -->
+                        <div>
+                            <div class="flex justify-between text-xs md:text-sm font-bold text-slate-200 mb-1">
+                                <span><i class="fa-solid fa-car-burst text-red-400 mr-2"></i> Dacia / Buggy Driving Skills</span>
+                                <span class="text-red-400 font-gamer text-lg">85% (Hits Trees 50% Time 🚗💥)</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-red-500 to-amber-500 h-3 rounded-full w-[85%]"></div>
+                            </div>
+                        </div>
+
+                        <!-- Metric 4 -->
+                        <div>
+                            <div class="flex justify-between text-xs md:text-sm font-bold text-slate-200 mb-1">
+                                <span><i class="fa-solid fa-gun text-purple-400 mr-2"></i> Clutch Power Under Pressure</span>
+                                <span class="text-purple-400 font-gamer text-lg">Infinite ⭐⭐⭐⭐⭐</span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-3">
+                                <div class="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 h-3 rounded-full w-full"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seal and Signature -->
+                    <div class="pt-6 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div class="text-center sm:text-left">
+                            <div class="text-xs text-slate-500 uppercase font-semibold">Issued By</div>
+                            <div class="text-xl font-bold font-gamer text-amber-400 tracking-wider">Your Faithful BGMI Duo Buddy 🎮</div>
+                        </div>
+                        <div class="text-center sm:text-right">
+                            <div class="text-xs text-slate-500 uppercase font-semibold">Validity</div>
+                            <div class="text-sm font-bold text-slate-200">Lifetime Chicken Dinner Subscription</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: BGMI HOTDROP WHEEL OF DESTINY -->
+        <section class="space-y-6">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Tactical Game Plan</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white font-gamer tracking-wide">Where Are We Dropping Today?</h2>
+                <p class="text-sm text-slate-400 max-w-lg mx-auto">Can't decide where to land or what tactic to use? Spin the BGMI wheel and let fate command our next match!</p>
+            </div>
+
+            <div class="cyber-card p-6 md:p-8 rounded-3xl flex flex-col items-center justify-center gap-6 shadow-xl relative">
+                <!-- Pointer Arrow -->
+                <div class="relative w-full max-w-sm flex justify-center items-center">
+                    <div class="absolute -top-4 z-20 text-red-500 text-3xl filter drop-shadow-md">
+                        <i class="fa-solid fa-caret-down"></i>
+                    </div>
+
+                    <!-- Canvas Wheel -->
+                    <canvas id="wheelCanvas" width="340" height="340" class="w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] rounded-full shadow-2xl transition-transform duration-1000 border-4 border-amber-500/50"></canvas>
+                </div>
+
+                <!-- Spin Control Button -->
+                <button id="spinBtn" onclick="spinWheel()" class="px-8 py-4 bg-gradient-to-r from-amber-500 via-red-500 to-amber-400 text-black font-extrabold rounded-full text-lg shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
+                    <i class="fa-solid fa-arrows-spin text-xl"></i>
+                    <span>Spin The BGMI Drop Wheel!</span>
+                </button>
+
+                <!-- Result Box -->
+                <div id="wheelResult" class="hidden cyber-card-bright text-white px-6 py-4 rounded-2xl text-center space-y-1 animate-bounce max-w-md border-amber-500">
+                    <div class="text-xs uppercase tracking-widest text-amber-400 font-bold">MISSION TACTIC SELECTED!</div>
+                    <div id="wheelResultText" class="text-2xl font-extrabold font-gamer text-white tracking-wider"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: REDEEMABLE BGMI DUO PERKS -->
+        <section class="space-y-6">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Exclusive Game Passes</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white font-gamer tracking-wide">Swagatika's BGMI Perk Passes</h2>
+                <p class="text-sm text-slate-400">Click any card to redeem in-game favors right now!</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <!-- Coupon 1 -->
+                <div class="cyber-card p-5 rounded-2xl border-2 border-dashed border-amber-500/40 flex flex-col justify-between space-y-4 relative overflow-hidden">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 bg-amber-500/20 rounded-xl text-amber-400 text-lg"><i class="fa-solid fa-vest"></i></span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 px-2 py-1 rounded-full">PRIORITY LOOT</span>
+                        </div>
+                        <h3 class="font-bold text-white text-lg font-gamer tracking-wide">Level 3 Helmet & Vest Guarantee</h3>
+                        <p class="text-xs text-slate-300">If we find a Level 3 Helmet or Vest, it immediately belongs to Swagatika. No questions asked!</p>
+                    </div>
+                    <button onclick="redeemCoupon(this, 'Level 3 Loot Guarantee')" class="w-full py-2.5 bg-amber-500 text-black text-xs font-bold rounded-xl hover:bg-amber-400 active:scale-95 transition-all">
+                        Redeem Pass 🪖
+                    </button>
+                </div>
+
+                <!-- Coupon 2 -->
+                <div class="cyber-card p-5 rounded-2xl border-2 border-dashed border-red-500/40 flex flex-col justify-between space-y-4 relative overflow-hidden">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 bg-red-500/20 rounded-xl text-red-400 text-lg"><i class="fa-solid fa-truck-medical"></i></span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider bg-red-500/20 text-red-400 px-2 py-1 rounded-full">VIP MEDIC</span>
+                        </div>
+                        <h3 class="font-bold text-white text-lg font-gamer tracking-wide">Smoke Screen & Emergency Revive</h3>
+                        <p class="text-xs text-slate-300">I will throw 3 smokes, rush through open fire, and revive you before shooting back!</p>
+                    </div>
+                    <button onclick="redeemCoupon(this, 'Smoke & Emergency Revive Pass')" class="w-full py-2.5 bg-red-500 text-white text-xs font-bold rounded-xl hover:bg-red-600 active:scale-95 transition-all">
+                        Redeem Pass 🚑
+                    </button>
+                </div>
+
+                <!-- Coupon 3 -->
+                <div class="cyber-card p-5 rounded-2xl border-2 border-dashed border-emerald-500/40 flex flex-col justify-between space-y-4 relative overflow-hidden">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 bg-emerald-500/20 rounded-xl text-emerald-400 text-lg"><i class="fa-solid fa-boxes-packing"></i></span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded-full">AIR DROP</span>
+                        </div>
+                        <h3 class="font-bold text-white text-lg font-gamer tracking-wide">AWM / Flare Gun Duty</h3>
+                        <p class="text-xs text-slate-300">Whenever we shoot a Flare Gun, Swagatika gets first choice of weapons and ammo!</p>
+                    </div>
+                    <button onclick="redeemCoupon(this, 'Flare Drop Priority Pass')" class="w-full py-2.5 bg-emerald-500 text-black text-xs font-bold rounded-xl hover:bg-emerald-400 active:scale-95 transition-all">
+                        Redeem Pass 📦
+                    </button>
+                </div>
+
+                <!-- Coupon 4 -->
+                <div class="cyber-card p-5 rounded-2xl border-2 border-dashed border-purple-500/40 flex flex-col justify-between space-y-4 relative overflow-hidden">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 bg-purple-500/20 rounded-xl text-purple-400 text-lg"><i class="fa-solid fa-car"></i></span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full">DRIVER DUTY</span>
+                        </div>
+                        <h3 class="font-bold text-white text-lg font-gamer tracking-wide">Zero Crash Driving Shield</h3>
+                        <p class="text-xs text-slate-300">If I drive the buggy into a tree or flip the dacia, I take full responsibility and won't complain!</p>
+                    </div>
+                    <button onclick="redeemCoupon(this, 'Driving Forgiveness Pass')" class="w-full py-2.5 bg-purple-600 text-white text-xs font-bold rounded-xl hover:bg-purple-500 active:scale-95 transition-all">
+                        Redeem Pass 🚗
+                    </button>
+                </div>
+
+                <!-- Coupon 5 -->
+                <div class="cyber-card p-5 rounded-2xl border-2 border-dashed border-blue-500/40 flex flex-col justify-between space-y-4 relative overflow-hidden">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 bg-blue-500/20 rounded-xl text-blue-400 text-lg"><i class="fa-solid fa-cubes"></i></span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full">AMMO BANK</span>
+                        </div>
+                        <h3 class="font-bold text-white text-lg font-gamer tracking-wide">Infinite 5.56 / 7.62 Ammo Supply</h3>
+                        <p class="text-xs text-slate-300">I will drop all my reserve ammo and 5 energy drinks for Swagatika whenever requested!</p>
+                    </div>
+                    <button onclick="redeemCoupon(this, 'Ammo Supply Pass')" class="w-full py-2.5 bg-blue-500 text-black text-xs font-bold rounded-xl hover:bg-blue-400 active:scale-95 transition-all">
+                        Redeem Pass 🔫
+                    </button>
+                </div>
+
+                <!-- Coupon 6 -->
+                <div class="cyber-card p-5 rounded-2xl border-2 border-dashed border-pink-500/40 flex flex-col justify-between space-y-4 relative overflow-hidden">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="p-2 bg-pink-500/20 rounded-xl text-pink-400 text-lg"><i class="fa-solid fa-mug-hot"></i></span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider bg-pink-500/20 text-pink-400 px-2 py-1 rounded-full">POST MATCH</span>
+                        </div>
+                        <h3 class="font-bold text-white text-lg font-gamer tracking-wide">Post-Match Snack / Tea Treat</h3>
+                        <p class="text-xs text-slate-300">After a long BGMI session, I owe you a real-life Boba, Coffee, or favorite Snack!</p>
+                    </div>
+                    <button onclick="redeemCoupon(this, 'Post-Match Treat Pass')" class="w-full py-2.5 bg-pink-500 text-black text-xs font-bold rounded-xl hover:bg-pink-400 active:scale-95 transition-all">
+                        Redeem Pass 🧋
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: BIOMETRIC GAMER REFLEX SCANNER -->
+        <section class="space-y-6">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Biometric Game Diagnostic</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white font-gamer tracking-wide">Clutch Queen Reflex Scanner</h2>
+                <p class="text-sm text-slate-400">Hold your finger on the helmet below to analyze Swagatika's gamer vibe level today!</p>
+            </div>
+
+            <div class="cyber-card p-8 rounded-3xl text-center flex flex-col items-center justify-center gap-6 relative overflow-hidden shadow-xl">
+                <!-- Scanner Interface -->
+                <div class="relative">
+                    <button id="scannerBtn" 
+                            onmousedown="startScanner()" 
+                            onmouseup="stopScanner()" 
+                            mouseleave="stopScanner()"
+                            ontouchstart="startScanner()" 
+                            ontouchend="stopScanner()"
+                            class="relative w-32 h-32 rounded-full bg-gradient-to-tr from-amber-500 to-red-600 text-slate-950 flex items-center justify-center text-5xl shadow-2xl transition-transform active:scale-95 border-4 border-amber-400 focus:outline-none">
+                        <i class="fa-solid fa-head-side-virus animate-pulse"></i>
+                        <div id="scanLine" class="hidden scanline"></div>
+                    </button>
+                </div>
+
+                <div id="scannerInstructions" class="text-sm font-bold text-amber-400">
+                    Press & Hold to Scan Touch Reflexes! 👆
+                </div>
+
+                <!-- Progress Bar -->
+                <div id="scanProgressContainer" class="w-full max-w-md bg-slate-800 h-4 rounded-full overflow-hidden hidden border border-amber-500/30">
+                    <div id="scanProgressBar" class="bg-gradient-to-r from-amber-400 to-red-500 h-full w-0 transition-all duration-100"></div>
+                </div>
+
+                <!-- Result Box -->
+                <div id="scannerResult" class="hidden cyber-card-bright text-white p-6 rounded-2xl max-w-md w-full text-center space-y-3 animate-float border-amber-500">
+                    <div class="text-xs uppercase font-bold text-amber-400 tracking-wider">DIAGNOSTIC COMPLETE • RESULT VERIFIED</div>
+                    <div id="scannerTitle" class="text-3xl font-extrabold font-gamer text-amber-300">100% PRO GAMER CLUTCH QUEEN!</div>
+                    <p id="scannerMessage" class="text-xs text-slate-200 leading-relaxed">
+                        Sensors detect 100% zero recoil reflexes, instant smoke deployment skill, high risk of snatching drop loot, and unbeatable duo synergy with your teammate!
+                    </p>
+                    <button onclick="resetScanner()" class="mt-2 text-xs font-bold text-black bg-amber-400 px-4 py-2 rounded-full hover:bg-amber-300 transition-all">Scan Again 🔄</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: "WHY SWAGATIKA IS THE BEST BGMI DUO" -->
+        <section class="space-y-6">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Battlefield Bond</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white font-gamer tracking-wide">6 Reasons Swagatika Is The Best Duo Partner</h2>
+                <p class="text-sm text-slate-400">Click each card to reveal why playing together is so legendary!</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div onclick="flipReasonCard(this)" class="cyber-card p-6 rounded-3xl cursor-pointer hover:border-amber-400 transition-all text-center space-y-4 min-h-[180px] flex flex-col justify-center items-center transform hover:-translate-y-1">
+                    <div class="text-3xl text-amber-400"><i class="fa-solid fa-kit-medical"></i></div>
+                    <div class="card-front font-bold text-white text-lg font-gamer tracking-wide">Reason #1: Always Has Medkits</div>
+                    <div class="card-back hidden text-xs text-slate-300 font-medium">Whenever I'm low on health in the playzone, you always drop First Aid & Energy Drinks!</div>
+                </div>
+
+                <!-- Card 2 -->
+                <div onclick="flipReasonCard(this)" class="card-back-container cyber-card p-6 rounded-3xl cursor-pointer hover:border-amber-400 transition-all text-center space-y-4 min-h-[180px] flex flex-col justify-center items-center transform hover:-translate-y-1">
+                    <div class="text-3xl text-red-400"><i class="fa-solid fa-people-roof"></i></div>
+                    <div class="card-front font-bold text-white text-lg font-gamer tracking-wide">Reason #2: Zero Panic Under Pressure</div>
+                    <div class="card-back hidden text-xs text-slate-300 font-medium">When a full squad rushes our house, you handle the clutch and stay cool under fire!</div>
+                </div>
+
+                <!-- Card 3 -->
+                <div onclick="flipReasonCard(this)" class="cyber-card p-6 rounded-3xl cursor-pointer hover:border-amber-400 transition-all text-center space-y-4 min-h-[180px] flex flex-col justify-center items-center transform hover:-translate-y-1">
+                    <div class="text-3xl text-emerald-400"><i class="fa-solid fa-bullseye"></i></div>
+                    <div class="card-front font-bold text-white text-lg font-gamer tracking-wide">Reason #3: Epic Cover Fire</div>
+                    <div class="card-back hidden text-xs text-slate-300 font-medium">You always keep enemies pinned down so I can push or heal safely!</div>
+                </div>
+
+                <!-- Card 4 -->
+                <div onclick="flipReasonCard(this)" class="cyber-card p-6 rounded-3xl cursor-pointer hover:border-amber-400 transition-all text-center space-y-4 min-h-[180px] flex flex-col justify-center items-center transform hover:-translate-y-1">
+                    <div class="text-3xl text-purple-400"><i class="fa-solid fa-microphone-lines"></i></div>
+                    <div class="card-front font-bold text-white text-lg font-gamer tracking-wide">Reason #4: Best Audio Vibes</div>
+                    <div class="card-back hidden text-xs text-slate-300 font-medium">Mic on, uncontrollable laughing, random stories, and pure fun during every match.</div>
+                </div>
+
+                <!-- Card 5 -->
+                <div onclick="flipReasonCard(this)" class="cyber-card p-6 rounded-3xl cursor-pointer hover:border-amber-400 transition-all text-center space-y-4 min-h-[180px] flex flex-col justify-center items-center transform hover:-translate-y-1">
+                    <div class="text-3xl text-amber-400"><i class="fa-solid fa-clock"></i></div>
+                    <div class="card-front font-bold text-white text-lg font-gamer tracking-wide">Reason #5: Hours Feel Like Minutes</div>
+                    <div class="card-back hidden text-xs text-slate-300 font-medium">A 3-hour gaming night flies by in seconds because playing together is so awesome.</div>
+                </div>
+
+                <!-- Card 6 -->
+                <div onclick="flipReasonCard(this)" class="cyber-card p-6 rounded-3xl cursor-pointer hover:border-amber-400 transition-all text-center space-y-4 min-h-[180px] flex flex-col justify-center items-center transform hover:-translate-y-1">
+                    <div class="text-3xl text-red-500"><i class="fa-solid fa-trophy"></i></div>
+                    <div class="card-front font-bold text-white text-lg font-gamer tracking-wide">Reason #6: Irreplaceable Partner</div>
+                    <div class="card-back hidden text-xs text-slate-300 font-medium">BGMI is fun, but playing BGMI with Swagatika is on a whole different level! 🍗🔥</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: AIR DROP DUO LETTER -->
+        <section class="space-y-6">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Special Tactical Transmission</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white font-gamer tracking-wide">Air Drop Note For Swagatika</h2>
+                <p class="text-sm text-slate-400">Click the Air Drop crate below to open your personal transmission!</p>
+            </div>
+
+            <div class="flex justify-center">
+                <div class="w-full max-w-xl">
+                    <div id="envelopeContainer" onclick="openEnvelope()" class="cyber-card p-8 rounded-3xl border-2 border-red-500/60 text-center cursor-pointer hover:scale-[1.02] transition-all shadow-2xl relative overflow-hidden group">
+                        <!-- Closed View -->
+                        <div id="envelopeClosed" class="space-y-4 py-8">
+                            <div class="w-20 h-20 mx-auto rounded-2xl airdrop-box flex items-center justify-center text-amber-300 text-4xl shadow-xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </div>
+                            <h3 class="text-3xl font-extrabold text-white font-gamer tracking-wider">Tap To Uncrate Air Drop Transmission 📦</h3>
+                            <p class="text-xs text-amber-400 font-bold uppercase tracking-widest">Authorized for Swagatika Only</p>
+                        </div>
+
+                        <!-- Opened Content -->
+                        <div id="envelopeOpened" class="hidden space-y-6 text-left py-4 px-2">
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                                <span class="font-gamer text-3xl text-amber-400 font-bold tracking-wider">Hey <span class="letterGFName">Swagatika</span>! 🎮</span>
+                                <i class="fa-solid fa-crosshairs text-red-500 text-2xl"></i>
+                            </div>
+                            
+                            <p class="text-sm md:text-base text-slate-200 leading-relaxed">
+                                I built this custom page just for you because having you as a BGMI duo partner makes every single match 100x more fun!
+                            </p>
+                            
+                            <p class="text-sm md:text-base text-slate-200 leading-relaxed">
+                                From hotdropping Pochinki, running from the blue zone, screaming during squad pushes, to getting Chicken Dinners—there is no one else I’d rather team up with.
+                            </p>
+
+                            <p class="text-sm md:text-base text-slate-200 leading-relaxed">
+                                Here's to countless more clutches, stolen Level 3 loot, hilarious crashes, and endless Chicken Dinners together! 🍗🔥
+                            </p>
+
+                            <div class="pt-4 border-t border-slate-800 flex justify-between items-end">
+                                <div>
+                                    <div class="text-xs text-amber-400 font-bold uppercase tracking-wider">GG WP,</div>
+                                    <div class="text-2xl font-gamer text-white font-bold tracking-wider">Your Duo Teammate Forever 🎮</div>
+                                </div>
+                                <button onclick="event.stopPropagation(); closeEnvelope();" class="text-xs font-bold text-red-400 hover:text-red-300 underline">Close Box</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center py-8 border-t border-slate-800 text-xs text-slate-500 space-y-2">
+            <p class="font-bold">Crafted with 🎮 for Swagatika • BGMI Duo Edition</p>
+            <p class="text-[11px] text-slate-600">Always drop smokes before reviving!</p>
+        </footer>
+
+    </div>
+
+    <!-- NAME CUSTOMIZER MODAL -->
+    <div id="nameModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="cyber-card p-6 md:p-8 rounded-3xl max-w-sm w-full space-y-4 shadow-2xl border-amber-500">
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-white font-gamer tracking-wider">Update Teammate Name</h3>
+                <button onclick="closeNameModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs text-slate-300">Enter gamer tag or nickname to customize the page!</p>
+            <input type="text" id="gfNameInput" value="Swagatika" placeholder="Swagatika..." class="w-full px-4 py-3 rounded-xl border border-amber-500/50 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm font-bold text-white bg-slate-900">
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeNameModal()" class="px-4 py-2 text-xs font-bold text-slate-400 hover:bg-slate-800 rounded-xl">Cancel</button>
+                <button onclick="saveGFName()" class="px-5 py-2 text-xs font-bold text-black bg-amber-400 hover:bg-amber-300 rounded-xl shadow-md">Update Gamer Tag 🎮</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            const label = document.getElementById('soundLabel');
+            if (soundEnabled) {
+                if (icon) icon.className = 'fa-solid fa-volume-high text-amber-400';
+                if (label) label.innerText = 'Game Audio: ON';
+                playChimeSound();
+            } else {
+                if (icon) icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                if (label) label.innerText = 'Game Audio: OFF';
+            }
+        }
+
+        // Futuristic Game Chime Sound Synthesizer
+        function playChimeSound() {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const freqs = [440, 554.37, 659.25, 880]; // A4, C#5, E5, A5
+                freqs.forEach((freq, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + index * 0.07);
+                    
+                    gain.gain.setValueAtTime(0, now + index * 0.07);
+                    gain.gain.linearRampToValueAtTime(0.2, now + index * 0.07 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.07 + 0.35);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + index * 0.07);
+                    osc.stop(now + index * 0.07 + 0.4);
+                });
+            } catch(e) {}
+        }
+
+        function playPopSound() {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.08);
+
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.09);
+            } catch(e) {}
+        }
+
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas ? bgCanvas.getContext('2d') : null;
+        let particles = [];
+
+        function resizeBgCanvas() {
+            if (!bgCanvas) return;
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBgCanvas);
+        resizeBgCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * (bgCanvas ? bgCanvas.width : 500);
+                this.y = (bgCanvas ? bgCanvas.height : 800) + Math.random() * 50;
+                this.size = Math.random() * 4 + 2;
+                this.speedY = Math.random() * 1.2 + 0.3;
+                this.opacity = Math.random() * 0.6 + 0.2;
+                this.color = Math.random() > 0.5 ? '#eab308' : '#ef4444';
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += Math.sin(this.y * 0.02) * 0.4;
+                if (this.y < -10) {
+                    this.reset();
+                }
+            }
+            draw() {
+                if (!bgCtx) return;
+                bgCtx.save();
+                bgCtx.globalAlpha = this.opacity;
+                bgCtx.fillStyle = this.color;
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                bgCtx.fill();
+                bgCtx.restore();
+            }
+        }
+
+        for (let i = 0; i < 35; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateBg() {
+            if (bgCtx && bgCanvas) {
+                bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+            }
+            requestAnimationFrame(animateBg);
+        }
+        animateBg();
+
+        const wheelCanvas = document.getElementById('wheelCanvas');
+        const wheelCtx = wheelCanvas ? wheelCanvas.getContext('2d') : null;
+        const options = [
+            "Pochinki Drop 🔥",
+            "Georgopol Crate 📦",
+            "Military Rush 🪖",
+            "Pan Camping 🍳",
+            "AWM Drop Hunt 🎯",
+            "Snake In Grass 🐍",
+            "Dacia Roaming 🚗",
+            "Bridge Camp 🌉"
+        ];
+        const colors = [
+            "#dc2626", "#eab308", "#9333ea", "#10b981",
+            "#2563eb", "#ea580c", "#d97706", "#0284c7"
+        ];
+
+        let startAngle = 0;
+        let arc = Math.PI / (options.length / 2);
+        let spinTimeout = null;
+        let spinAngleStart = 10;
+        let spinTime = 0;
+        let spinTimeTotal = 0;
+
+        function drawWheel() {
+            if (!wheelCanvas || !wheelCtx) return;
+            const centerX = wheelCanvas.width / 2;
+            const centerY = wheelCanvas.height / 2;
+            const outsideRadius = centerX - 12;
+            const insideRadius = 38;
+            const textRadius = insideRadius + (outsideRadius - insideRadius) * 0.52;
+
+            wheelCtx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+
+            for (let i = 0; i < options.length; i++) {
+                const angle = startAngle + i * arc;
+                wheelCtx.fillStyle = colors[i % colors.length];
+
+                // Draw sector
+                wheelCtx.beginPath();
+                wheelCtx.arc(centerX, centerY, outsideRadius, angle, angle + arc, false);
+                wheelCtx.arc(centerX, centerY, insideRadius, angle + arc, angle, true);
+                wheelCtx.fill();
+
+                // Sector border lines
+                wheelCtx.strokeStyle = "rgba(15, 23, 42, 0.4)";
+                wheelCtx.lineWidth = 2;
+                wheelCtx.stroke();
+
+                // Draw sector text oriented radially inside slice
+                wheelCtx.save();
+                wheelCtx.translate(
+                    centerX + Math.cos(angle + arc / 2) * textRadius,
+                    centerY + Math.sin(angle + arc / 2) * textRadius
+                );
+                
+                // Align text outward along slice radius
+                let textAngle = angle + arc / 2;
+                // Keep text right-side up if in lower half
+                if (textAngle > Math.PI / 2 && textAngle < (3 * Math.PI) / 2) {
+                    textAngle += Math.PI;
+                }
+                wheelCtx.rotate(textAngle);
+
+                wheelCtx.textAlign = "center";
+                wheelCtx.textBaseline = "middle";
+                wheelCtx.font = "bold 13px 'Plus Jakarta Sans', sans-serif";
+                
+                // Dark text outline for high contrast
+                wheelCtx.strokeStyle = "rgba(0,0,0,0.7)";
+                wheelCtx.lineWidth = 3.5;
+                const text = options[i];
+                wheelCtx.strokeText(text, 0, 0);
+
+                wheelCtx.fillStyle = "#ffffff";
+                wheelCtx.fillText(text, 0, 0);
+                wheelCtx.restore();
+            }
+
+            // Draw outer border ring
+            wheelCtx.beginPath();
+            wheelCtx.arc(centerX, centerY, outsideRadius, 0, Math.PI * 2, false);
+            wheelCtx.lineWidth = 4;
+            wheelCtx.strokeStyle = "#eab308";
+            wheelCtx.stroke();
+
+            // Draw center circle
+            wheelCtx.beginPath();
+            wheelCtx.arc(centerX, centerY, insideRadius, 0, Math.PI * 2, false);
+            wheelCtx.fillStyle = "#0f172a";
+            wheelCtx.fill();
+            wheelCtx.lineWidth = 3;
+            wheelCtx.strokeStyle = "#eab308";
+            wheelCtx.stroke();
+            
+            // Center Game Icon
+            wheelCtx.fillStyle = "#eab308";
+            wheelCtx.font = "bold 18px sans-serif";
+            wheelCtx.textAlign = "center";
+            wheelCtx.textBaseline = "middle";
+            wheelCtx.fillText("🎮", centerX, centerY);
+        }
+
+        function spinWheel() {
+            playPopSound();
+            spinAngleStart = Math.random() * 10 + 10;
+            spinTime = 0;
+            spinTimeTotal = Math.random() * 3000 + 4000;
+            rotateWheel();
+            const btn = document.getElementById('spinBtn');
+            if (btn) btn.disabled = true;
+            const resultBox = document.getElementById('wheelResult');
+            if (resultBox) resultBox.classList.add('hidden');
+        }
+
+        function rotateWheel() {
+            spinTime += 30;
+            if (spinTime >= spinTimeTotal) {
+                stopRotateWheel();
+                return;
+            }
+            const spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+            startAngle += (spinAngle * Math.PI / 180);
+            drawWheel();
+            spinTimeout = setTimeout(rotateWheel, 30);
+        }
+
+        function stopRotateWheel() {
+            clearTimeout(spinTimeout);
+            const degrees = startAngle * 180 / Math.PI + 90;
+            const arcd = arc * 180 / Math.PI;
+            const index = Math.floor((360 - degrees % 360) / arcd);
+            
+            const text = options[(index + options.length) % options.length];
+            
+            const resultBox = document.getElementById('wheelResult');
+            const resultText = document.getElementById('wheelResultText');
+            if (resultText) resultText.innerText = text;
+            if (resultBox) resultBox.classList.remove('hidden');
+
+            const btn = document.getElementById('spinBtn');
+            if (btn) btn.disabled = false;
+            
+            triggerConfettiBurst();
+            playChimeSound();
+        }
+
+        function easeOut(t, b, c, d) {
+            const ts = (t/=d)*t;
+            const tc = ts*t;
+            return b+c*(tc + -3*ts + 3*t);
+        }
+
+        function redeemCoupon(btn, title) {
+            playChimeSound();
+            btn.innerText = "PASS REDEEMED! 🍗";
+            btn.disabled = true;
+            btn.className = "w-full py-2.5 bg-slate-700 text-slate-400 text-xs font-bold rounded-xl cursor-not-allowed";
+            showToast(`Perk Activated: "${title}"! In Effect for Swagatika 🔥`);
+            triggerConfettiBurst();
+        }
+
+        let scanTimer = null;
+        let scanProgress = 0;
+
+        function startScanner() {
+            playPopSound();
+            const scanLine = document.getElementById('scanLine');
+            const progressContainer = document.getElementById('scanProgressContainer');
+            const instructions = document.getElementById('scannerInstructions');
+
+            if (scanLine) scanLine.classList.remove('hidden');
+            if (progressContainer) progressContainer.classList.remove('hidden');
+            if (instructions) instructions.innerText = "Scanning Gamer Reflexes...";
+            
+            scanProgress = 0;
+            clearInterval(scanTimer);
+            scanTimer = setInterval(() => {
+                scanProgress += 5;
+                const progressBar = document.getElementById('scanProgressBar');
+                if (progressBar) progressBar.style.width = `${scanProgress}%`;
+                
+                if (scanProgress >= 100) {
+                    clearInterval(scanTimer);
+                    completeScan();
+                }
+            }, 60);
+        }
+
+        function stopScanner() {
+            if (scanProgress < 100) {
+                clearInterval(scanTimer);
+                const scanLine = document.getElementById('scanLine');
+                const progressContainer = document.getElementById('scanProgressContainer');
+                const progressBar = document.getElementById('scanProgressBar');
+                const instructions = document.getElementById('scannerInstructions');
+
+                if (scanLine) scanLine.classList.add('hidden');
+                if (progressContainer) progressContainer.classList.add('hidden');
+                if (progressBar) progressBar.style.width = '0%';
+                if (instructions) instructions.innerText = "Press & Hold to Scan Touch Reflexes! 👆";
+            }
+        }
+
+        function completeScan() {
+            const scanLine = document.getElementById('scanLine');
+            const scannerBtn = document.getElementById('scannerBtn');
+            const instructions = document.getElementById('scannerInstructions');
+            const progressContainer = document.getElementById('scanProgressContainer');
+            const scannerResult = document.getElementById('scannerResult');
+
+            if (scanLine) scanLine.classList.add('hidden');
+            if (scannerBtn) scannerBtn.classList.add('hidden');
+            if (instructions) instructions.classList.add('hidden');
+            if (progressContainer) progressContainer.classList.add('hidden');
+            if (scannerResult) scannerResult.classList.remove('hidden');
+            
+            playChimeSound();
+            triggerConfettiBurst();
+        }
+
+        function resetScanner() {
+            const scannerBtn = document.getElementById('scannerBtn');
+            const instructions = document.getElementById('scannerInstructions');
+            const scannerResult = document.getElementById('scannerResult');
+
+            if (scannerBtn) scannerBtn.classList.remove('hidden');
+            if (instructions) {
+                instructions.classList.remove('hidden');
+                instructions.innerText = "Press & Hold to Scan Touch Reflexes! 👆";
+            }
+            if (scannerResult) scannerResult.classList.add('hidden');
+        }
+
+        function flipReasonCard(card) {
+            playPopSound();
+            const front = card.querySelector('.card-front');
+            const back = card.querySelector('.card-back');
+            
+            if (front && back) {
+                if (front.classList.contains('hidden')) {
+                    front.classList.remove('hidden');
+                    back.classList.add('hidden');
+                } else {
+                    front.classList.add('hidden');
+                    back.classList.remove('hidden');
+                }
+            }
+        }
+
+        function openEnvelope() {
+            playChimeSound();
+            const closed = document.getElementById('envelopeClosed');
+            const opened = document.getElementById('envelopeOpened');
+            if (closed) closed.classList.add('hidden');
+            if (opened) opened.classList.remove('hidden');
+            triggerConfettiBurst();
+        }
+
+        function closeEnvelope() {
+            playPopSound();
+            const closed = document.getElementById('envelopeClosed');
+            const opened = document.getElementById('envelopeOpened');
+            if (opened) opened.classList.add('hidden');
+            if (closed) closed.classList.remove('hidden');
+        }
+
+        function openNameModal() {
+            const modal = document.getElementById('nameModal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeNameModal() {
+            const modal = document.getElementById('nameModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveGFName() {
+            const input = document.getElementById('gfNameInput');
+            const name = input ? input.value.trim() : 'Swagatika';
+            if (name) {
+                const heroName = document.getElementById('heroGFName');
+                const certName = document.getElementById('certGFName');
+                if (heroName) heroName.innerText = name;
+                if (certName) certName.innerText = name;
+                document.querySelectorAll('.letterGFName').forEach(el => el.innerText = name);
+                showToast(`Page updated for ${name}! 🎮`);
+                playChimeSound();
+                triggerConfettiBurst();
+            }
+            closeNameModal();
+        }
+
+        function triggerConfettiBurst() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 70,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#eab308', '#ef4444', '#10b981', '#3b82f6']
+                });
+            }
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'cyber-card-bright text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 transition-all transform translate-y-4 opacity-0 border-amber-500';
+            toast.innerHTML = `<i class="fa-solid fa-gamepad text-amber-400"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        window.onload = function() {
+            drawWheel();
+        };
+
+        // Initialize audio context on first user touch / click
+        document.body.addEventListener('click', function initAudio() {
+            getAudioContext();
+            document.body.removeEventListener('click', initAudio);
+        }, { once: true });
+    </script>
+</body>
+</html>
